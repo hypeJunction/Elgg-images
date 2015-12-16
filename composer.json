@@ -1,0 +1,28 @@
+{
+	"name": "hypejunction/images",
+	"version": "0.0.0",
+	"type": "elgg-plugin",
+	"description": "Images API",
+	"homepage": "http://hypejunction.com",
+	"keywords": [
+		"elgg", "plugin", "image"
+	],
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Ismayil Khayredinov",
+			"email": "info@hypejunction.com"
+		}
+	],
+	"require": {
+		"php": ">=5.5",
+		"composer/installers": "~1.0",
+		"imagine/imagine": "~0.6",
+		"hypejunction/proxy": "~1.0",
+		"hypejunction/actions_delete": "~1.0"
+	},
+	"suggest": {
+		"hypejunction/cropper": "~1.0"
+	}
+}
+
