@@ -100,6 +100,7 @@ class Image extends ElggFile implements ImageInterface {
 		$params = [
 			'entity' => $this,
 			'size' => $size,
+			'extension' => $ext,
 		];
 
 		return elgg_trigger_plugin_hook('thumb:filename', 'object', $params, $default);
