@@ -6,7 +6,6 @@ use ElggFile;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
-use WideImage\Exception\Exception;
 
 class Image extends ElggFile implements ImageInterface {
 
@@ -166,7 +165,7 @@ class Image extends ElggFile implements ImageInterface {
 				$image = $image->thumbnail($box, $mode);
 				$image->save($thumb->getFilenameOnFilestore(), $options);
 				unset($image);
-			} catch (Exception $ex) {
+			} catch (\Exception $ex) {
 				elgg_log($ex->getMessage(), 'ERROR');
 				$error = true;
 			}
