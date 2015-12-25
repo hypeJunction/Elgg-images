@@ -22,6 +22,8 @@ class Image extends ElggFile implements ImageInterface {
 			if (!$this->icontime || $this->icontime != $mtime) {
 				if ($this->createThumbs((int) $this->x1, (int) $this->y1, (int) $this->x2, (int) $this->y2)) {
 					$this->icontime = $mtime;
+				} else {
+					return false;
 				}
 			}
 		}
