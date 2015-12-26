@@ -33,6 +33,14 @@ class Image extends ElggFile implements ImageInterface {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function delete() {
+		$this->createThumbs();
+		return parent::delete();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function getThumb($size = 'medium') {
 
 		if (!$this->guid) {
