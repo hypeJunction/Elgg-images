@@ -159,11 +159,9 @@ class Image extends ElggFile implements ImageInterface {
 			$options = elgg_trigger_plugin_hook('thumb:options', 'object', $params, []);
 			try {
 
-				if ($mode == 'outbound') {
-					$mode = ImagineImageInterface::THUMBNAIL_OUTBOUND;
-				} else if ($mode == 'inset') {
-					$mode = ImagineImageInterface::THUMBNAIL_INSET;
-				} else {
+				ini_set('memory_limit', '256M');
+
+				if ($mode != 'outbound' && $mode != 'inset') {
 					$mode = ($square) ? ImagineImageInterface::THUMBNAIL_OUTBOUND : ImagineImageInterface::THUMBNAIL_INSET;
 				}
 
@@ -187,7 +185,7 @@ class Image extends ElggFile implements ImageInterface {
 			}
 			return false;
 		}
-		
+
 		$this->icon_owner_guid = $this->owner_guid;
 		return $thumbs;
 	}

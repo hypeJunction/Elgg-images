@@ -137,7 +137,6 @@ function images_thumb_sizes($hook, $type, $return, $params) {
 		'w' => 325,
 		'h' => 325,
 		'square' => false,
-		'mode' => 'outbound',
 	];
 
 	// Suitable for use with card item view
