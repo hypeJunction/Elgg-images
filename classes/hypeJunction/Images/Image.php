@@ -34,7 +34,7 @@ class Image extends ElggFile implements ImageInterface {
 	 * {@inheritdoc}
 	 */
 	public function delete() {
-		$this->createThumbs();
+		$this->clearThumbs();
 		return parent::delete();
 	}
 
