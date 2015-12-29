@@ -5,7 +5,7 @@
 	<id>images</id>
 
 	<description>API for uploading, manipulating and displaying images</description>
-	<category>ui</category>
+	<category>files</category>
 	<version type="dist">1.0.2</version>
 
 	<author>Ismayil Khayredinov (info@hypejunction.com)</author>
@@ -23,14 +23,9 @@
 		<name>proxy</name>
 	</requires>
 
-	<requires>
-		<type>plugin</type>
-		<name>actions_delete</name>
-	</requires>
-
 	<suggests>
 		<type>plugin</type>
-		<name>cropper</name>
+		<name>images_ui</name>
 	</suggests>
 
 </plugin_manifest>
