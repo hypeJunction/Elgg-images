@@ -8,6 +8,7 @@ use ElggFile;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use WideImage\Exception\Exception;
 
 /**
@@ -46,7 +47,7 @@ class ImageService {
 	public function createFromUpload($input_name, ElggFile $file = null) {
 
 		$upload = $this->request->files->get($input_name);
-		/* @var $upload \Symfony\Component\HttpFoundation\File\UploadedFile */
+		/* @var $upload UploadedFile */
 		if (!$upload || !$upload->isValid() || !preg_match('~^image/(jpeg|gif|png)~', $upload->getClientMimeType())) {
 			return false;
 		}
@@ -54,6 +55,12 @@ class ImageService {
 		if (!isset($file)) {
 			$file = new ElggFile();
 			$file->subtype = 'file';
+			$file->owner_guid = elgg_get_logged_in_user_guid();
+		}
+
+		if (!$file instanceof ElggFile || !$file->owner_guid) {
+			// files need an owner to load a filestore
+			return false;
 		}
 
 		if ($file->guid && $file->exists()) {
@@ -79,13 +86,13 @@ class ImageService {
 			$file->title = $file->originalfilename;
 		}
 
-		if (!$file->exists()) {
+		if (!$file->exists() || !$file->save()) {
 			// faled to write the file
 			$file->delete();
 			return false;
 		}
 
-		return $file;
+		return false;
 	}
 
 	/**
@@ -96,16 +103,22 @@ class ImageService {
 	 * @param ElggFile $file Optional file object to write to
 	 * @return ElggFile|false
 	 */
-	public function createFromUpload($path, ElggFile $file = null) {
+	public function createFromResource($path, ElggFile $file = null) {
 
 		$contents = @file_get_contents($path);
 		if (empty($contents)) {
 			return;
 		}
-		
+
 		if (!isset($file)) {
 			$file = new ElggFile();
 			$file->subtype = 'file';
+			$file->owner_guid = elgg_get_logged_in_user_guid();
+		}
+
+		if (!$file instanceof ElggFile || !$file->owner_guid) {
+			// files need an owner to load a filestore
+			return false;
 		}
 
 		if ($file->guid && $file->exists()) {
@@ -135,7 +148,7 @@ class ImageService {
 			$file->title = $file->originalfilename;
 		}
 
-		if (!$this->isImage($file) || !$file->exists()) {
+		if (!$this->isImage($file) || !$file->exists() || !$file->save()) {
 			// written file is not an image or write failed
 			$file->delete();
 			return false;
@@ -191,7 +204,7 @@ class ImageService {
 		if (!$entity instanceof ElggFile) {
 			return false;
 		}
-		
+
 		$mimetype = $entity->mimetype ? : $entity->detectMimeType(null, 'application/otcet-stream');
 		if (preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
 			// Imagine doesn't support other image types
@@ -312,7 +325,7 @@ class ImageService {
 		if ($crop_width <= 0 && $crop_height <= 0) {
 			return false;
 		}
-		
+
 		$params = [
 			'entity' => $entity,
 			'thumb' => $entity,
