@@ -43,3 +43,11 @@ $thumbs['media'] = [
 
 By default, all square thumbs will be cropped in `outbound` mode.
 `master` size will be crooped in `inset` mode without cropping.
+
+
+## Notes
+
+ * This plugin interferes with the thumbnail display of the file plugin. For files uploded with the `file/upload` action,
+old thumbnails (60x60, 153x153, 600x600) will be generated, but will not be displayed.
+Standard size thumbnails (as per site's `icon_sizes` or filtered values from the hook) will be generated for all file object
+that are `image/jpeg`, `image/gif` and `image/png`.

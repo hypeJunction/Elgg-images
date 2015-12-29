@@ -1,3 +1,13 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/hypeJunction/Elgg-images/compare/1.0.2...v1.1.0) (2015-12-29)
+
+
+### Features
+
+* **images:** add an image service and moves all UI into a separate plugin ([30af41b](https://github.com/hypeJunction/Elgg-images/commit/30af41b))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/hypeJunction/Elgg-images/compare/1.0.1...v1.0.2) (2015-12-27)
 

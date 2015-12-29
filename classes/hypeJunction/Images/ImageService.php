@@ -79,7 +79,64 @@ class ImageService {
 			$file->title = $file->originalfilename;
 		}
 
-		if (!$file->exists() || !$file->save()) {
+		if (!$file->exists()) {
+			// faled to write the file
+			$file->delete();
+			return false;
+		}
+
+		return $file;
+	}
+
+	/**
+	 * Write a file resource into a file object
+	 * If no $file is provided, a new object of subtype 'file' will be created
+	 *
+	 * @param string   $path Full path to file
+	 * @param ElggFile $file Optional file object to write to
+	 * @return ElggFile|false
+	 */
+	public function createFromUpload($path, ElggFile $file = null) {
+
+		$contents = @file_get_contents($path);
+		if (empty($contents)) {
+			return;
+		}
+		
+		if (!isset($file)) {
+			$file = new ElggFile();
+			$file->subtype = 'file';
+		}
+
+		if ($file->guid && $file->exists()) {
+			// remove file written to the filestore previously
+			unlink($file->getFilenameOnFilestore());
+		}
+
+		if (filter_var($path, FILTER_VALIDATE_URL)) {
+			$path = parse_url($path, PHP_URL_PATH);
+		}
+
+		$originalfilename = pathinfo($path, PATHINFO_BASENAME);
+		$basename = elgg_strtolower(time() . $originalfilename);
+		$directory = $this->getDirectory($file);
+		$filename = $this->getFilename($file, $basename);
+
+		$file->setFilename("$directory/$filename");
+
+		$file->open('write');
+		$file->write($contents);
+		$file->close();
+
+		$file->mimetype = $file->detectMimeType();
+		$file->simpletype = 'image';
+		$file->originafilename = $originalfilename;
+		if (!isset($file->title)) {
+			$file->title = $file->originalfilename;
+		}
+
+		if (!$this->isImage($file) || !$file->exists()) {
+			// written file is not an image or write failed
 			$file->delete();
 			return false;
 		}
@@ -126,12 +183,12 @@ class ImageService {
 	/**
 	 * Check if an entity is an image, and if this plugin is allowed to treat it as one
 	 *
-	 * @param ElggEntity $entity Entity
+	 * @param ElggFile $entity File entity
 	 * @return bool
 	 */
-	public function isImage(ElggEntity $entity) {
+	public function isImage($entity = null) {
 
-		if (!$entity instanceof ElggFile || !$entity->guid) {
+		if (!$entity instanceof ElggFile) {
 			return false;
 		}
 		
