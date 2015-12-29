@@ -1,3 +1,13 @@
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/hypeJunction/Elgg-images/compare/1.1.1...v1.1.2) (2015-12-29)
+
+
+### Bug Fixes
+
+* **composer:** let composer resolve proxy version based on project config ([2fa9c3b](https://github.com/hypeJunction/Elgg-images/commit/2fa9c3b))
+
+
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/hypeJunction/Elgg-images/compare/1.1.0...v1.1.1) (2015-12-29)
 
