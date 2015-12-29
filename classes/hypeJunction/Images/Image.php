@@ -10,7 +10,7 @@ class Image extends ElggFile implements ImageInterface {
 	 * {@inheritdoc}
 	 */
 	public function getThumb($size = 'medium') {
-		return images()->getThumb($size);
+		return images()->getThumb($this, $size);
 	}
 
 	/**
