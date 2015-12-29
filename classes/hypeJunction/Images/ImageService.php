@@ -9,7 +9,7 @@ use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use WideImage\Exception\Exception;
+use Exception;
 
 /**
  * Image service
@@ -81,7 +81,7 @@ class ImageService {
 
 		$file->mimetype = ElggFile::detectMimeType($upload->getPathname(), $upload->getClientMimeType());
 		$file->simpletype = 'image';
-		$file->originafilename = $originalfilename;
+		$file->originalfilename = $originalfilename;
 		if (!isset($file->title)) {
 			$file->title = $file->originalfilename;
 		}
@@ -92,7 +92,7 @@ class ImageService {
 			return false;
 		}
 
-		return false;
+		return $file;
 	}
 
 	/**
@@ -143,7 +143,7 @@ class ImageService {
 
 		$file->mimetype = $file->detectMimeType();
 		$file->simpletype = 'image';
-		$file->originafilename = $originalfilename;
+		$file->originalfilename = $originalfilename;
 		if (!isset($file->title)) {
 			$file->title = $file->originalfilename;
 		}
@@ -458,3 +458,4 @@ class ImageService {
 	}
 
 }
+

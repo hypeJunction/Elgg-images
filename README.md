@@ -45,9 +45,39 @@ By default, all square thumbs will be cropped in `outbound` mode.
 `master` size will be crooped in `inset` mode without cropping.
 
 
-## Notes
+ * `images()->createFromUpload()` - create image file from upload
+ * `images()->createFromResource()` - create image file from a file resource
+ * `images()->crop()` - crop source image
+ * `images()->isImage()` - check if an entity is an image
+ * `images()->createThumbs()` - creates thumbnails for an image
+ * `images()->getThumb()` - returns a thumbnail file object
+ * `images()->clearThumbs()` - removes all image thumbnails
 
  * This plugin interferes with the thumbnail display of the file plugin. For files uploded with the `file/upload` action,
 old thumbnails (60x60, 153x153, 600x600) will be generated, but will not be displayed.
 Standard size thumbnails (as per site's `icon_sizes` or filtered values from the hook) will be generated for all file object
 that are `image/jpeg`, `image/gif` and `image/png`.
+## Hooks
+
+ * `'thumb:sizes',$entity_type` - filters thumnail sizes configuration array
+ * `'thumb:directory', $entity_type` - filters directory name in entity owners filestore directory where thumbs will be saved
+ * `'thumb:filename', $entity_type` - filters filename that will be given to the thumbnail
+ * `'options', 'imagine'` - filters options passed to Imagine, when saving cropped images
+
+## Thumbs config
+
+Thubm sizes can be configured an array of options:
+
+```php
+// Add `media` size that will be cropped in an `outbound` mode filling a 640x360 container.
+$thumbs['media'] = [
+	'w' => 640, // max width
+	'h' => 360, // max height
+	'square' => false, // crop a square
+	'croppable' => true, // allow cropping
+	'mode' => 'outbound', // 'inset' or 'outbound'
+];
+```
+
+By default, all square thumbs will be cropped in `outbound` mode.
+`master` size will be crooped in `inset` mode without cropping.
