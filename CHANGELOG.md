@@ -1,3 +1,14 @@
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/hypeJunction/Elgg-images/compare/1.1.0...v1.1.1) (2015-12-29)
+
+
+### Bug Fixes
+
+* **api:** add missing variable ([00bfee4](https://github.com/hypeJunction/Elgg-images/commit/00bfee4))
+* **api:** do not cast file object to bool ([bac8002](https://github.com/hypeJunction/Elgg-images/commit/bac8002))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/hypeJunction/Elgg-images/compare/1.0.2...v1.1.0) (2015-12-29)
 
