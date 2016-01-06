@@ -47,7 +47,11 @@ class ImageService {
 	public function createFromUpload($input_name, ElggFile $file = null) {
 
 		$upload = $this->request->files->get($input_name);
-		/* @var $upload UploadedFile */
+
+		if (!$upload instanceof UploadedFile) {
+			return false;
+		}
+		
 		if (!$upload->isValid() || !preg_match('~^image/(jpeg|gif|png)~', $upload->getClientMimeType())) {
 			return false;
 		}
