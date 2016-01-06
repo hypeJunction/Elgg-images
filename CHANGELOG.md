@@ -1,3 +1,27 @@
+<a name="1.1.3"></a>
+## [1.1.3](https://github.com/hypeJunction/Elgg-images/compare/1.0.0...v1.1.3) (2016-01-06)
+
+
+### Bug Fixes
+
+* **api:** add missing variable ([00bfee4](https://github.com/hypeJunction/Elgg-images/commit/00bfee4))
+* **api:** do not cast file object to bool ([bac8002](https://github.com/hypeJunction/Elgg-images/commit/bac8002))
+* **composer:** let composer resolve proxy version based on project config ([2fa9c3b](https://github.com/hypeJunction/Elgg-images/commit/2fa9c3b))
+* **cropping:** update cropping logic ([8bc7a31](https://github.com/hypeJunction/Elgg-images/commit/8bc7a31))
+* **icons:** delete thumbs on entity delete ([3aef504](https://github.com/hypeJunction/Elgg-images/commit/3aef504))
+* **icons:** delete thumbs on entity delete ([7eb40bf](https://github.com/hypeJunction/Elgg-images/commit/7eb40bf))
+* **thumbs:** add extension to hook parameters ([66dccc5](https://github.com/hypeJunction/Elgg-images/commit/66dccc5))
+* **thumbs:** catch all exceptions ([f040819](https://github.com/hypeJunction/Elgg-images/commit/f040819))
+* **thumbs:** consider image unsaved if cropping fails ([c2f07c9](https://github.com/hypeJunction/Elgg-images/commit/c2f07c9))
+* **uploads:** check instance before proceeding with upload ([06c7c5d](https://github.com/hypeJunction/Elgg-images/commit/06c7c5d))
+
+### Features
+
+* **images:** add an image service and moves all UI into a separate plugin ([2305037](https://github.com/hypeJunction/Elgg-images/commit/2305037))
+* **images:** add an image service and moves all UI into a separate plugin ([30af41b](https://github.com/hypeJunction/Elgg-images/commit/30af41b))
+
+
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/hypeJunction/Elgg-images/compare/1.1.1...v1.1.2) (2015-12-29)
 
