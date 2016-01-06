@@ -49,7 +49,7 @@ class ImageService {
 		$upload = $this->request->files->get($input_name);
 
 		if (!$upload instanceof UploadedFile) {
-			return false;
+			return $file ? : false;
 		}
 		
 		if (!$upload->isValid() || !preg_match('~^image/(jpeg|gif|png)~', $upload->getClientMimeType())) {
