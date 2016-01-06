@@ -1,3 +1,13 @@
+<a name="1.1.4"></a>
+## [1.1.4](https://github.com/hypeJunction/Elgg-images/compare/1.1.3...v1.1.4) (2016-01-06)
+
+
+### Bug Fixes
+
+* **upload:** return original file if no file has been uploaded ([0817021](https://github.com/hypeJunction/Elgg-images/commit/0817021))
+
+
+
 <a name="1.1.3"></a>
 ## [1.1.3](https://github.com/hypeJunction/Elgg-images/compare/1.0.0...v1.1.3) (2016-01-06)
 
