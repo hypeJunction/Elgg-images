@@ -16,10 +16,13 @@ elgg_register_event_handler('init', 'system', 'images_init');
  */
 function images_init() {
 
-	elgg_register_plugin_hook_handler('entity:icon:url', 'object', 'images_entity_icon_url');
+	elgg_register_plugin_hook_handler('entity:icon:url', 'all', 'images_entity_icon_url');
 
 	elgg_register_event_handler('create', 'object', 'images_update_event_handler');
+
 	elgg_register_event_handler('update:after', 'object', 'images_update_event_handler');
+	elgg_register_event_handler('update:after', 'all', 'images_update_avatar_access');
+
 	elgg_register_event_handler('delete', 'object', 'images_delete_event_handler', 999);
 }
 
@@ -34,18 +37,37 @@ function images_init() {
  */
 function images_entity_icon_url($hook, $type, $return, $params) {
 
+	if ($return) {
+		// another plugin has set the icon URL
+		return;
+	}
+
 	$size = elgg_extract('size', $params, 'medium');
 	$entity = elgg_extract('entity', $params);
-	if (!elgg_images_is_image($entity)) {
+
+	if (!$entity instanceof ElggEntity || !$entity->icontime) {
 		return;
 	}
 
-	$thumb = elgg_images_get_thumb($entity, $size);
-	if (!$thumb) {
+	if (elgg_images_is_image($entity)) {
+		$thumb = elgg_images_get_thumb($entity, $size);
+	} else {
+		$avatar = elgg_images_get_avatar($entity);
+		if ($avatar) {
+			$thumb = elgg_images_get_thumb($avatar, $size);
+		}
+	}
+
+	if (!$thumb instanceof ElggFile) {
+		return;
+	}
+	
+	$url = elgg_get_inline_url($thumb, true);
+	if (!$url) {
 		return;
 	}
 
-	return elgg_get_inline_url($thumb, true);
+	return $url;
 }
 
 /**
@@ -63,6 +85,7 @@ function images_update_event_handler($event, $type, $entity) {
 	}
 
 	if ($entity->icon_owner_guid && $entity->icon_owner_guid != $entity->owner_guid) {
+		// Owner has changed
 		elgg_images_clear_thumbs($entity);
 	}
 
@@ -85,5 +108,31 @@ function images_update_event_handler($event, $type, $entity) {
  * @return void
  */
 function images_delete_handler($event, $type, $entity) {
-	elgg_images_clear_thumbs($entity);
+	return elgg_images_clear_thumbs($entity);
+}
+
+/**
+ * Update avatar access id when entity is saved
+ *
+ * @param string     $event  "update:after"
+ * @param string     $type   "all"
+ * @param ElggEntity $entity Entity
+ */
+function images_update_avatar_access($event, $type, $entity) {
+
+	if (!$entity instanceof ElggEntity) {
+		return;
+	}
+
+	$access_id = (int) $entity->access_id;
+	$avatars = images()->getAvatars($entity);
+
+	if (!$avatars) {
+		return;
+	}
+	
+	foreach ($avatars as $avatar) {
+		$avatar->access_id = $access_id;
+		$avatar->save();
+	}
 }

@@ -6,7 +6,7 @@ Image API for Elgg
 
 ## Features
 
- * Generic API for handling image files
+ * Generic API for handling image files and entity avatars
  * Standardized handling of thubmnails for all image files
 
 ## API
@@ -18,6 +18,10 @@ Image API for Elgg
  * `elgg_images_create_thumbs()` - creates thumbnails for an image
  * `elgg_images_get_thumbs()` - returns a thumbnail file object
  * `elgg_images_clear_thumbs()` - removes all image thumbnails
+ * `elgg_images_create_avatar_from_upload()` - create an avatar for an entity from file upload
+ * `elgg_images_create_avatar_from_resource()` - create an avatar for an entity from file resource
+ * `elgg_images_clear_avatars()` - clear entity avatars
+ * `elgg_images_get_avatar()` - get avatar for an entity
 
 ## Hooks
 
@@ -44,6 +48,9 @@ By default, all square thumbs will be cropped in `outbound` mode.
 `master` size will be crooped in `inset` mode without cropping.
 
 ## Notes
+
+* This plugin distinguishes between thumbs and avatars. Thumbs are resized instances of the ElggFile entity, whereas avatars
+are ElggFile entities contained by the entity they belong to. Avatars belong to non file entities and have thumbs.
 
 * This plugin interferes with the thumbnail display of the file plugin. For files uploded with the `file/upload` action,
 old thumbnails (60x60, 153x153, 600x600) will be generated, but will not be displayed.

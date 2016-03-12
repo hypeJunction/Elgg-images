@@ -51,7 +51,7 @@ class ImageService {
 		if (!$upload instanceof UploadedFile) {
 			return $file ? : false;
 		}
-		
+
 		if (!$upload->isValid() || !preg_match('~^image/(jpeg|gif|png)~', $upload->getClientMimeType())) {
 			return false;
 		}
@@ -461,5 +461,126 @@ class ImageService {
 		touch($entity->getFilenameOnFilestore());
 	}
 
-}
+	/**
+	 * Create an avatar object from an upload
+	 *
+	 * @param ElggEntity $entity     Entity to which avatar will belong
+	 * @param string     $input_name Input name
+	 * @return Avatar|false
+	 */
+	function createAvatarFromUpload(ElggEntity $entity, $input_name = 'avatar') {
 
+		$avatars = $this->getAvatars($entity);
+
+		$avatar = new Avatar();
+		$avatar->owner_guid = $entity instanceof ElggUser ? $entity->guid : $entity->owner_guid;
+		$avatar->container_guid = $entity->guid;
+		$avatar->access_id = $entity->access_id;
+		$avatar->setFilename("avatars/$entity->guid/" . time() . $_FILES[$input_name]['name']);
+
+		$avatar = $this->createFromUpload($input_name, $avatar);
+
+		if ($avatar && $avatar->save()) {
+			if ($avatars) {
+				// clear old avatars
+				foreach ($avatars as $a) {
+					$a->delete();
+				}
+			}
+			$entity->avatar_last_modified = $avatar->time_created;
+		}
+
+		return $avatar;
+	}
+
+	/**
+	 * Create an avatar from a file resource
+	 *
+	 * @param ElggEntity $entity Entity to which avatar will belong
+	 * @param type       $path   Path to file
+	 * @return Avatar|false
+	 */
+	function createAvatarFromResource(ElggEntity $entity, $path) {
+
+		$avatars = $this->getAvatars($entity);
+
+		$basename = pathinfo($path, PATHINFO_BASENAME);
+
+		$avatar = new Avatar();
+		$avatar->owner_guid = $entity instanceof ElggUser ? $entity->guid : $entity->owner_guid;
+		$avatar->container_guid = $entity->guid;
+		$avatar->access_id = $entity->access_id;
+		$avatar->setFilename("avatars/$entity->guid/" . time() . $basename);
+
+		$avatar = $this->createFromResource($path, $avatar);
+
+		if ($avatar && $avatar->save()) {
+			if ($avatars) {
+				// clear old avatars
+				foreach ($avatars as $a) {
+					$a->delete();
+				}
+			}
+			$entity->avatar_last_modified = $avatar->time_created;
+		}
+
+		return $avatar;
+	}
+
+	/**
+	 * Clear all entity avatars
+	 *
+	 * @param ElggEntity $entity Entity
+	 * @return void
+	 */
+	function clearAvatars(ElggEntity $entity) {
+		$avatars = $this->getAvatars($entity);
+
+		if ($avatars) {
+			foreach ($avatars as $avatar) {
+				$avatar->delete();
+			}
+		}
+
+		unset($entity->avatar_last_modified);
+	}
+
+	/**
+	 * Returns entity avatar
+	 *
+	 * @param ElggEntity $entity Entity
+	 * @return Avatar|false
+	 */
+	public function getAvatar(ElggEntity $entity) {
+
+		if (!$entity->avatar_last_modified) {
+			return false;
+		}
+
+		$avatars = elgg_get_entities([
+			'types' => 'object',
+			'subtypes' => Avatar::SUBTYPE,
+			'container_guids' => (int) $entity->guid,
+			'limit' => 1,
+		]);
+
+		return !empty($avatars) ? $avatars[0] : false;
+	}
+
+	/**
+	 * Returns all entity avatars
+	 *
+	 * @param ElggEntity $entity Entity
+	 * @return Avatar[]|false
+	 */
+	public function getAvatars(ElggEntity $entity) {
+
+		return elgg_get_entities([
+			'types' => 'object',
+			'subtypes' => Avatar::SUBTYPE,
+			'container_guids' => (int) $entity->guid,
+			'limit' => 0,
+		]);
+	}
+
+}

@@ -95,3 +95,57 @@ function elgg_images_create_thumbs(ElggEntity $entity, $x1 = null, $y1 = null, $
 function elgg_images_clear_thumbs(ElggEntity $entity) {
 	return images()->clearThumbs($entity);
 }
+
+/**
+ * Returns entity avatar
+ *
+ * @param ElggEntity $entity Entity
+ * @return Avatar|ElggFile|false
+ */
+function elgg_images_get_avatar(ElggEntity $entity) {
+	if (images()->isImage($entity)) {
+		return $entity;
+	}
+	return images()->getAvatar($entity);
+}
+
+/**
+ * Create an avatar object from an upload
+ *
+ * @param ElggEntity $entity     Entity to which avatar will belong
+ * @param string     $input_name Input name
+ * @return Avatar|ElggFile|false
+ */
+function elgg_images_create_avatar_from_upload(ElggEntity $entity, $input_name = 'avatar') {
+	if (images()->isImage($entity)) {
+		return images()->createFromUpload($input_name, $entity);
+	}
+	return images()->createAvatarFromUpload($entity, $input_name);
+}
+
+/**
+ * Create an avatar from a file resource
+ *
+ * @param ElggEntity $entity Entity to which avatar will belong
+ * @param type       $path   Path to file
+ * @return Avatar|ElggFile|false
+ */
+function elgg_images_create_avatar_from_resource(ElggEntity $entity, $path) {
+	if (images()->isImage($entity)) {
+		return images()->createFromResource($path, $entity);
+	}
+	return images()->createAvatarFromResource($entity, $input_name);
+}
+
+/**
+ * Clear all entity avatars
+ *
+ * @param ElggEntity $entity Entity
+ * @return bool
+ */
+function elgg_images_clear_avatars(ElggEntity $entity) {
+	if (images()->isImage($entity)) {
+		return images()->clearThumbs($entity);
+	}
+	return images()->clearAvatars($entity);
+}
