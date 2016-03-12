@@ -24,6 +24,8 @@ function images_init() {
 	elgg_register_event_handler('update:after', 'all', 'images_update_avatar_access');
 
 	elgg_register_event_handler('delete', 'object', 'images_delete_event_handler', 999);
+
+	elgg_register_plugin_hook_handler('thumb:sizes', 'object', 'images_file_thumb_sizes');
 }
 
 /**
@@ -138,4 +140,46 @@ function images_update_avatar_access($event, $type, $entity) {
 		$avatar->access_id = $access_id;
 		$avatar->save();
 	}
+}
+
+/**
+ * Configure file object thumb sizes
+ *
+ * @param string $hook   "thumb:sizes"
+ * @param string $type   "object"
+ * @param array  $return Thumb sizes
+ * @param array  $params Hook params
+ * @return array
+ */
+function images_file_thumb_sizes($hook, $type, $return, $params) {
+
+	$entity = elgg_extract('entity', $params);
+	if (!$entity instanceof ElggFile || $entity->getSubtype() !== 'file') {
+		return;
+	}
+
+	if (elgg_get_plugin_setting('override_file_thumb_dimensions', 'images')) {
+		return;
+	}
+
+	return array(
+		'small' => array(
+			'w' => 60,
+			'h' => 60,
+			'square' => true,
+			'metadata_name' => 'thumbnail',
+		),
+		'medium' => array(
+			'w' => 153,
+			'h' => 153,
+			'square' => true,
+			'metadata_name' => 'smallthumb',
+		),
+		'large' => array(
+			'w' => 600,
+			'h' => 600,
+			'square' => false,
+			'metadata_name' => 'largethumb',
+		)
+	);
 }
