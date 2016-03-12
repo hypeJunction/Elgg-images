@@ -5,6 +5,7 @@ namespace hypeJunction\Images;
 use Elgg\Http\Request;
 use ElggEntity;
 use ElggFile;
+use ElggUser;
 use Exception;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
@@ -194,7 +195,7 @@ class ImageService {
 			'entity' => $file,
 		];
 
-		return elgg_trigger_plugin_hook('thumb:filename', 'object', $params, $basename);
+		return elgg_trigger_plugin_hook('filename', 'object', $params, $basename);
 	}
 
 	/**
@@ -231,16 +232,24 @@ class ImageService {
 			return false;
 		}
 
-		if (!array_key_exists($size, $this->getThumbSizes($entity))) {
+		$sizes = $this->getThumbSizes($entity);
+		if (!array_key_exists($size, $sizes)) {
 			return false;
 		}
 
-		$directory = $this->getThumbDirectory($entity);
-		$filename = $this->getThumbFilename($entity, $size);
+		if (isset($sizes[$size]['metadata_name'])) {
+			$md_name = $sizes[$size]['metadata_name'];
+			$filestorename = $entity->$md_name;
+		} else {
+			$directory = $this->getThumbDirectory($entity);
+			$filename = $this->getThumbFilename($entity, $size);
+			$filestorename = "$directory/$filename";
+		}
 
 		$thumb = new Thumb();
 		$thumb->owner_guid = $entity->icon_owner_guid ? : $entity->owner_guid;
-		$thumb->setFilename("$directory/$filename");
+		$thumb->setFilename($filestorename);
+
 		if (!$thumb->exists()) {
 			return false;
 		}
@@ -285,7 +294,11 @@ class ImageService {
 	 * @return string
 	 */
 	protected function getThumbFilename(ElggEntity $entity, $size = 'medium') {
-		$mimetype = $entity->detectMimeType(null, $entity->mimetype);
+		if ($entity instanceof ElggFile) {
+			$mimetype = $entity->detectMimeType(null, $entity->mimetype);
+		} else {
+			$mimetype = 'image/jpeg';
+		}
 		switch ($mimetype) {
 			default :
 				$ext = 'jpg';
@@ -366,6 +379,8 @@ class ImageService {
 			return false;
 		}
 
+		$this->clearThumbs($entity);
+		
 		$x1 = isset($x1) ? (int) $x1 : (int) $entity->x1;
 		$y1 = isset($y1) ? (int) $y1 : (int) $entity->y1;
 		$x2 = isset($x2) ? (int) $x2 : (int) $entity->x2;
@@ -385,13 +400,19 @@ class ImageService {
 			$square = elgg_extract('square', $opts);
 			$croppable = elgg_extract('croppable', $opts, $square);
 			$mode = elgg_extract('mode', $opts);
+			$metadata_name = elgg_extract('metadata_name', $opts);
 
-			$directory = $this->getThumbDirectory($entity);
-			$filename = $this->getThumbFilename($entity, $size);
+			if ($metadata_name && $entity->$metadata_name) {
+				$filestorename = $entity->$metadata_name;
+			} else {
+				$directory = $this->getThumbDirectory($entity);
+				$filename = $this->getThumbFilename($entity, $size);
+				$filestorename = "$directory/$filename";
+			}
 
 			$thumb = new Thumb();
 			$thumb->owner_guid = $entity->owner_guid;
-			$thumb->setFilename("$directory/$filename");
+			$thumb->setFilename($filestorename);
 			if (!$thumb->exists()) {
 				$thumb->open('write');
 				$thumb->close();
@@ -420,6 +441,11 @@ class ImageService {
 				$image = $image->thumbnail($box, $mode);
 				$image->save($thumb->getFilenameOnFilestore(), $options);
 				unset($image);
+
+				if (!empty($opts['metadata_name'])) {
+					$md_name = $opts['metadata_name'];
+					$entity->$md_name = $thumb->getFilename();
+				}
 			} catch (Exception $ex) {
 				elgg_log($ex->getMessage(), 'ERROR');
 				$error = true;
