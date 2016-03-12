@@ -9,11 +9,14 @@ if (file_exists("{$plugin_root}/vendor/autoload.php")) {
 	require_once "{$plugin_root}/vendor/autoload.php";
 }
 
+require_once __DIR__  . '/lib/api.php';
+
 /**
  * Returns an ImageService singleton
  *
  * @staticvar hypeJunction\Images\ImageService $instance
  * @return ImageService
+ * @access private
  */
 function images() {
 	static $instance;

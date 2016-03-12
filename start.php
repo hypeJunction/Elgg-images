@@ -36,11 +36,11 @@ function images_entity_icon_url($hook, $type, $return, $params) {
 
 	$size = elgg_extract('size', $params, 'medium');
 	$entity = elgg_extract('entity', $params);
-	if (!images()->isImage($entity)) {
+	if (!elgg_images_is_image($entity)) {
 		return;
 	}
 
-	$thumb = images()->getThumb($entity, $size);
+	$thumb = elgg_images_get_thumb($entity, $size);
 	if (!$thumb) {
 		return;
 	}
@@ -58,12 +58,12 @@ function images_entity_icon_url($hook, $type, $return, $params) {
  */
 function images_update_event_handler($event, $type, $entity) {
 
-	if (!images()->isImage($entity)) {
+	if (!elgg_images_is_image($entity)) {
 		return;
 	}
 
 	if ($entity->icon_owner_guid && $entity->icon_owner_guid != $entity->owner_guid) {
-		images()->clearThumbs($entity);
+		elgg_images_clear_thumbs($entity);
 	}
 
 	$mtime = filemtime($entity->getFilenameOnFilestore());
@@ -85,5 +85,5 @@ function images_update_event_handler($event, $type, $entity) {
  * @return void
  */
 function images_delete_handler($event, $type, $entity) {
-	images()->clearThumbs($entity);
+	elgg_images_clear_thumbs($entity);
 }

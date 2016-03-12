@@ -5,11 +5,11 @@ namespace hypeJunction\Images;
 use Elgg\Http\Request;
 use ElggEntity;
 use ElggFile;
+use Exception;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Exception;
 
 /**
  * Image service
@@ -29,7 +29,7 @@ class ImageService {
 
 	/**
 	 * Constructor
-	 * @param \hypeJunction\Images\ImagineInterface $imagine
+	 * @param ImagineInterface $imagine
 	 */
 	public function __construct(Request $request, ImagineInterface $imagine) {
 		$this->request = $request;
@@ -167,7 +167,7 @@ class ImageService {
 	 * @param ElggFile $file File entity
 	 * @return string
 	 */
-	public function getDirectory(ElggFile $file) {
+	protected function getDirectory(ElggFile $file) {
 		$default = 'file';
 		$params = [
 			'entity' => $file,
@@ -183,7 +183,7 @@ class ImageService {
 	 * @param string   $basename Default filename
 	 * @return string
 	 */
-	public function getFilename(ElggFile $file, $basename = '') {
+	protected function getFilename(ElggFile $file, $basename = '') {
 
 		$filestorename = $file->getFilename();
 		if ($filestorename) {
@@ -223,7 +223,7 @@ class ImageService {
 	 *
 	 * @param ElggEntity $entity Entity
 	 * @param string     $size   Thumb size
-	 * @return boolean|\Thumb
+	 * @return boolean|Thumb
 	 */
 	public function getThumb(ElggEntity $entity, $size = 'medium') {
 
@@ -268,7 +268,7 @@ class ImageService {
 	 * @param ElggEntity $entity Entity
 	 * @return string
 	 */
-	public function getThumbDirectory(ElggEntity $entity) {
+	protected function getThumbDirectory(ElggEntity $entity) {
 		$default = 'icons';
 		$params = [
 			'entity' => $entity,
@@ -284,7 +284,7 @@ class ImageService {
 	 * @param string     $size   Thumb size
 	 * @return string
 	 */
-	public function getThumbFilename(ElggEntity $entity, $size = 'medium') {
+	protected function getThumbFilename(ElggEntity $entity, $size = 'medium') {
 		$mimetype = $entity->detectMimeType(null, $entity->mimetype);
 		switch ($mimetype) {
 			default :

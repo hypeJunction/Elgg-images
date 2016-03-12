@@ -2,6 +2,8 @@
 
 namespace hypeJunction\Images;
 
-class Thumb extends \ElggFile implements ThumbInterface {
+use ElggFile;
+
+class Thumb extends ElggFile implements ThumbInterface {
 	
 }
