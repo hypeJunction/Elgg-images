@@ -52,7 +52,5 @@ By default, all square thumbs will be cropped in `outbound` mode.
 * This plugin distinguishes between thumbs and avatars. Thumbs are resized instances of the ElggFile entity, whereas avatars
 are ElggFile entities contained by the entity they belong to. Avatars belong to non file entities and have thumbs.
 
-* This plugin interferes with the thumbnail display of the file plugin. For files uploded with the `file/upload` action,
-old thumbnails (60x60, 153x153, 600x600) will be generated, but will not be displayed.
-Standard size thumbnails (as per site's `icon_sizes` or filtered values from the hook) will be generated for all file object
-that are `image/jpeg`, `image/gif` and `image/png`.
+* If you override file plugin thumbs, you will need to update the file upload action to remove the code that generates thumbnails.
+Otherwise, two sets of thumbs will be generated. Currently there is no way to non-intrusively override thumb generation in the file plugin.
