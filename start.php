@@ -23,7 +23,7 @@ function images_init() {
 
 	elgg_register_event_handler('update:after', 'all', 'images_update_avatar_access');
 
-	elgg_register_event_handler('delete', 'object', 'images_delete_event_handler', 999);
+	elgg_register_event_handler('delete', 'object', 'images_delete_handler', 999);
 
 	elgg_register_plugin_hook_handler('thumb:sizes', 'object', 'images_file_thumb_sizes');
 }
