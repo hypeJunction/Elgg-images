@@ -209,6 +209,11 @@ class ImageService {
 			return false;
 		}
 
+		$ext = pathinfo($entity->getFilenameOnFilestore(), PATHINFO_EXTENSION);
+		if (in_array($ext, array('jpg', 'jpeg', 'gif', 'png'))) {
+			return true;
+		}
+		
 		$mimetype = $entity->mimetype ? : $entity->detectMimeType(null, 'application/otcet-stream');
 		if (preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
 			// Imagine doesn't support other image types
