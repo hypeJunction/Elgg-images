@@ -1,0 +1,23 @@
+{
+	"name": "hypejunction/images",
+	"type": "elgg-plugin",
+	"description": "Images API — image upload, manipulation, and thumbnail service",
+	"homepage": "http://hypejunction.com",
+	"keywords": [
+		"elgg", "plugin", "image"
+	],
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Ismayil Khayredinov",
+			"email": "info@hypejunction.com"
+		}
+	],
+	"require": {
+		"php": ">=7.4",
+		"imagine/imagine": "^1.0"
+	},
+	"config": {
+		"allow-plugins": {}
+	}
+}
