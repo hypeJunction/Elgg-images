@@ -175,7 +175,13 @@ class ImageService
         if (!$entity instanceof ElggFile) {
             return false;
         }
-        $mimetype = $entity->mimetype ?: $entity->detectMimeType(null, 'application/otcet-stream');
+        // detectMimeType() was removed in Elgg 4.x. Fall back to mime_content_type()
+        // only when the file actually exists on the filestore.
+        $mimetype = $entity->mimetype;
+        if (empty($mimetype) && $entity->exists()) {
+            $path = $entity->getFilenameOnFilestore();
+            $mimetype = @mime_content_type($path) ?: 'application/octet-stream';
+        }
         if (preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
             // Imagine doesn't support other image types
             return true;
