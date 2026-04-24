@@ -16,9 +16,9 @@
 		}
 	],
 	"require": {
-		"php": ">=7.4",
+		"php": ">=8.2",
 		"imagine/imagine": "^1.0",
-		"elgg/elgg": "^4.0",
+		"elgg/elgg": "~5.1.0",
 		"composer/installers": "^2.0"
 	},
 	"config": {
