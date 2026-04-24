@@ -24,8 +24,8 @@ class Bootstrap extends PluginBootstrap {
 	 * {@inheritdoc}
 	 */
 	public function init() {
-		elgg_register_plugin_hook_handler('entity:icon:url', 'object', function(\Elgg\Hook $hook) {
-			$params = $hook->getParams();
+		elgg_register_event_handler('entity:icon:url', 'object', function(\Elgg\Event $event) {
+			$params = $event->getParams();
 			$size = elgg_extract('size', $params, 'medium');
 			$entity = elgg_extract('entity', $params);
 			if (!images()->isImage($entity)) {
@@ -50,8 +50,6 @@ class Bootstrap extends PluginBootstrap {
 			if (!$entity->icontime || $entity->icontime != $mtime) {
 				if (images()->createThumbs($entity)) {
 					$entity->icontime = $mtime;
-				} else {
-					return false;
 				}
 			}
 		});
@@ -68,8 +66,6 @@ class Bootstrap extends PluginBootstrap {
 			if (!$entity->icontime || $entity->icontime != $mtime) {
 				if (images()->createThumbs($entity)) {
 					$entity->icontime = $mtime;
-				} else {
-					return false;
 				}
 			}
 		});

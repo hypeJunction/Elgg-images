@@ -145,7 +145,7 @@ class ImageService
     {
         $default = 'file';
         $params = ['entity' => $file];
-        $directory = elgg_trigger_plugin_hook('directory', 'object', $params, $default);
+        $directory = elgg_trigger_event_results('directory', 'object', $params, $default);
         return trim($directory, '/');
     }
     /**
@@ -162,7 +162,7 @@ class ImageService
             $basename = pathinfo($filestorename, PATHINFO_BASENAME);
         }
         $params = ['entity' => $file];
-        return elgg_trigger_plugin_hook('thumb:filename', 'object', $params, $basename);
+        return elgg_trigger_event_results('thumb:filename', 'object', $params, $basename);
     }
     /**
      * Check if an entity is an image, and if this plugin is allowed to treat it as one
@@ -223,7 +223,7 @@ class ImageService
     {
         $defaults = (array) elgg_get_config('icon_sizes');
         $params = ['entity' => $entity];
-        return elgg_trigger_plugin_hook('thumb:sizes', $entity->getType(), $params, $defaults);
+        return elgg_trigger_event_results('thumb:sizes', $entity->getType(), $params, $defaults);
     }
     /**
      * Get thumb directory name
@@ -235,7 +235,7 @@ class ImageService
     {
         $default = 'icons';
         $params = ['entity' => $entity];
-        $directory = elgg_trigger_plugin_hook('thumb:directory', 'object', $params, $default);
+        $directory = elgg_trigger_event_results('thumb:directory', 'object', $params, $default);
         return trim($directory, '/');
     }
     /**
@@ -261,7 +261,7 @@ class ImageService
         }
         $default = "{$entity->guid}/{$size}.{$ext}";
         $params = ['entity' => $entity, 'size' => $size, 'extension' => $ext];
-        return elgg_trigger_plugin_hook('thumb:filename', 'object', $params, $default);
+        return elgg_trigger_event_results('thumb:filename', 'object', $params, $default);
     }
     /**
      * Crop source image
@@ -284,7 +284,7 @@ class ImageService
             return false;
         }
         $params = ['entity' => $entity, 'thumb' => $entity];
-        $options = elgg_trigger_plugin_hook('options', 'imagine', $params, []);
+        $options = elgg_trigger_event_results('options', 'imagine', $params, []);
         try {
             ini_set('memory_limit', '256M');
             $image = $this->imagine->open($entity->getFilenameOnFilestore());
@@ -338,7 +338,7 @@ class ImageService
             }
             $thumbs[] = $thumb;
             $params = ['entity' => $entity, 'thumb' => $thumb];
-            $options = elgg_trigger_plugin_hook('options', 'imagine', $params, []);
+            $options = elgg_trigger_event_results('options', 'imagine', $params, []);
             try {
                 ini_set('memory_limit', '256M');
                 if ($mode != 'outbound' && $mode != 'inset') {
