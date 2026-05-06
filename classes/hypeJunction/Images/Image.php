@@ -4,6 +4,9 @@ namespace hypeJunction\Images;
 
 use ElggFile;
 
+/**
+ * Image class.
+ */
 class Image extends ElggFile implements ImageInterface {
 
 	/**
@@ -61,5 +64,4 @@ class Image extends ElggFile implements ImageInterface {
 	public function getInlineUrl() {
 		return elgg_get_inline_url($this, true);
 	}
-
 }

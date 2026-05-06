@@ -17,5 +17,6 @@ function images() {
 		$imagine = new \Imagine\Gd\Imagine();
 		$instance = new \hypeJunction\Images\ImageService($request, $imagine);
 	}
+
 	return $instance;
 }

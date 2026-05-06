@@ -63,5 +63,4 @@ interface ImageInterface {
 	 * @return string
 	 */
 	public function getInlineUrl();
-
 }

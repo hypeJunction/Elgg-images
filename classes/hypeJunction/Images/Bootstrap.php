@@ -5,6 +5,9 @@ namespace hypeJunction\Images;
 use Elgg\Includer;
 use Elgg\PluginBootstrap;
 
+/**
+ * Bootstrap class.
+ */
 class Bootstrap extends PluginBootstrap {
 
 	/**
@@ -31,10 +34,12 @@ class Bootstrap extends PluginBootstrap {
 			if (!images()->isImage($entity)) {
 				return;
 			}
+
 			$thumb = images()->getThumb($entity, $size);
 			if (!$thumb) {
 				return;
 			}
+
 			return elgg_get_inline_url($thumb, true);
 		});
 
@@ -43,9 +48,11 @@ class Bootstrap extends PluginBootstrap {
 			if (!images()->isImage($entity)) {
 				return;
 			}
+
 			if ($entity->icon_owner_guid && $entity->icon_owner_guid != $entity->owner_guid) {
 				images()->clearThumbs($entity);
 			}
+
 			$mtime = filemtime($entity->getFilenameOnFilestore());
 			if (!$entity->icontime || $entity->icontime != $mtime) {
 				if (images()->createThumbs($entity)) {
@@ -59,9 +66,11 @@ class Bootstrap extends PluginBootstrap {
 			if (!images()->isImage($entity)) {
 				return;
 			}
+
 			if ($entity->icon_owner_guid && $entity->icon_owner_guid != $entity->owner_guid) {
 				images()->clearThumbs($entity);
 			}
+
 			$mtime = filemtime($entity->getFilenameOnFilestore());
 			if (!$entity->icontime || $entity->icontime != $mtime) {
 				if (images()->createThumbs($entity)) {
