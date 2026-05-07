@@ -45,7 +45,7 @@ class Bootstrap extends PluginBootstrap {
 
 		elgg_register_event_handler('create', 'object', function(\Elgg\Event $event) {
 			$entity = $event->getObject();
-			if (!images()->isImage($entity)) {
+			if (!images()->isImage($entity) || !$entity instanceof \ElggFile || !$entity->exists()) {
 				return;
 			}
 
@@ -63,7 +63,7 @@ class Bootstrap extends PluginBootstrap {
 
 		elgg_register_event_handler('update:after', 'object', function(\Elgg\Event $event) {
 			$entity = $event->getObject();
-			if (!images()->isImage($entity)) {
+			if (!images()->isImage($entity) || !$entity instanceof \ElggFile || !$entity->exists()) {
 				return;
 			}
 

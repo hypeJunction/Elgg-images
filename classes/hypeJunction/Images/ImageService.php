@@ -77,18 +77,32 @@ class ImageService {
 		$directory = $this->getDirectory($file);
 		$filename = $this->getFilename($file, $basename);
 		$file->setFilename("{$directory}/{$filename}");
-		$file->open('write');
-		$file->close();
-		move_uploaded_file($upload->getPathname(), $file->getFilenameOnFilestore());
-		$file->mimetype = ElggFile::detectMimeType($upload->getPathname(), $upload->getClientMimeType());
+
+		// Elgg 5.x removed ElggFile::detectMimeType — use the OS-level
+		// detector and fall back to the client-supplied mimetype.
+		$file->mimetype = @mime_content_type($upload->getPathname()) ?: $upload->getClientMimeType();
 		$file->simpletype = 'image';
 		$file->originalfilename = $originalfilename;
 		if (!isset($file->title)) {
 			$file->title = $file->originalfilename;
 		}
 
-		if (!$file->exists() || !$file->save()) {
-			// faled to write the file
+		// Save FIRST so the file gets its GUID. In Elgg 5.x, DiskFilestore uses
+		// the entity GUID (not owner_guid) to compute paths for `file`-subtype
+		// entities, so writing before save would land bytes at a pre-save path
+		// that no longer exists once the GUID is assigned.
+		if (!$file->save()) {
+			return false;
+		}
+
+		$file->open('write');
+		$file->close();
+		if (!move_uploaded_file($upload->getPathname(), $file->getFilenameOnFilestore())) {
+			$file->delete();
+			return false;
+		}
+
+		if (!$file->exists()) {
 			$file->delete();
 			return false;
 		}
@@ -135,18 +149,33 @@ class ImageService {
 		$directory = $this->getDirectory($file);
 		$filename = $this->getFilename($file, $basename);
 		$file->setFilename("{$directory}/{$filename}");
-		$file->open('write');
-		$file->write($contents);
-		$file->close();
-		$file->mimetype = $file->detectMimeType();
+
+		// detect mime from the source file before write so we can short-circuit
+		// non-image inputs without touching the filestore at all
+		$file->mimetype = @mime_content_type($path) ?: 'application/octet-stream';
 		$file->simpletype = 'image';
 		$file->originalfilename = $originalfilename;
 		if (!isset($file->title)) {
 			$file->title = $file->originalfilename;
 		}
 
-		if (!$this->isImage($file) || !$file->exists() || !$file->save()) {
-			// written file is not an image or write failed
+		if (!$this->isImage($file)) {
+			return false;
+		}
+
+		// Save FIRST so the file gets its GUID. In Elgg 5.x, DiskFilestore uses
+		// the entity GUID (not owner_guid) to compute paths for `file`-subtype
+		// entities, so writing before save would land bytes at a pre-save path
+		// that no longer exists once the GUID is assigned.
+		if (!$file->save()) {
+			return false;
+		}
+
+		$file->open('write');
+		$file->write($contents);
+		$file->close();
+
+		if (!$file->exists()) {
 			$file->delete();
 			return false;
 		}
@@ -203,7 +232,7 @@ class ImageService {
 			$mimetype = @mime_content_type($path) ?: 'application/octet-stream';
 		}
 
-		if (preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
+		if (!empty($mimetype) && preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
 			// Imagine doesn't support other image types
 			return true;
 		}
@@ -272,7 +301,14 @@ class ImageService {
 	 * @return string
 	 */
 	public function getThumbFilename(ElggEntity $entity, $size = 'medium') {
-		$mimetype = $entity->detectMimeType(null, $entity->mimetype);
+		// detectMimeType() was removed in Elgg 4.x — fall back to the entity's
+		// stored mimetype, then to mime_content_type() if the file exists on the
+		// filestore.
+		$mimetype = $entity->mimetype;
+		if (empty($mimetype) && $entity instanceof ElggFile && $entity->exists()) {
+			$mimetype = @mime_content_type($entity->getFilenameOnFilestore()) ?: 'application/octet-stream';
+		}
+
 		switch ($mimetype) {
 			default:
 				$ext = 'jpg';
@@ -424,6 +460,12 @@ class ImageService {
 
 		unset($entity->icontime);
 		unset($entity->icon_owner_guid);
-		touch($entity->getFilenameOnFilestore());
+
+		// Bust caches by touching the source file. Skip if the file was
+		// already removed (e.g. during a delete event firing on an entity
+		// whose filestore content has gone).
+		if ($entity instanceof ElggFile && $entity->exists()) {
+			@touch($entity->getFilenameOnFilestore());
+		}
 	}
 }

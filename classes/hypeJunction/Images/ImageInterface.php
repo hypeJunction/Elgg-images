@@ -51,16 +51,4 @@ interface ImageInterface {
 	 * @return bool
 	 */
 	public function clearThumbs();
-
-	/**
-	 * Returns download URL
-	 * @return string
-	 */
-	public function getDownloadUrl();
-
-	/**
-	 * Returns inline display URL
-	 * @return string
-	 */
-	public function getInlineUrl();
 }

@@ -50,18 +50,4 @@ class Image extends ElggFile implements ImageInterface {
 	public function clearThumbs() {
 		return images()->clearThumbs($this);
 	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getDownloadUrl() {
-		return elgg_get_download_url($this, true);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getInlineUrl() {
-		return elgg_get_inline_url($this, true);
-	}
 }
