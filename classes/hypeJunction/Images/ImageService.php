@@ -378,10 +378,11 @@ class ImageService {
 			return false;
 		}
 
-		$x1 = isset($x1) ? (int) $x1 : (int) $entity->x1;
-		$y1 = isset($y1) ? (int) $y1 : (int) $entity->y1;
-		$x2 = isset($x2) ? (int) $x2 : (int) $entity->x2;
-		$y2 = isset($y2) ? (int) $y2 : (int) $entity->y2;
+		$coords = $entity->getIconCoordinates();
+		$x1 = isset($x1) ? (int) $x1 : (int) elgg_extract('x1', $coords, 0);
+		$y1 = isset($y1) ? (int) $y1 : (int) elgg_extract('y1', $coords, 0);
+		$x2 = isset($x2) ? (int) $x2 : (int) elgg_extract('x2', $coords, 0);
+		$y2 = isset($y2) ? (int) $y2 : (int) elgg_extract('y2', $coords, 0);
 		$crop_width = $x2 - $x1;
 		$crop_height = $y2 - $y1;
 		$error = false;
@@ -458,7 +459,6 @@ class ImageService {
 			}
 		}
 
-		unset($entity->icontime);
 		unset($entity->icon_owner_guid);
 
 		// Bust caches by touching the source file. Skip if the file was

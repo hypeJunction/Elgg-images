@@ -1,5 +1,19 @@
 # Changelog
 
+## 6.0.0 (2026-05-09)
+
+### Breaking Changes
+
+- Requires Elgg 6.x (`~6.1.0`) and PHP 8.1+
+
+### Changed
+
+- `Bootstrap` simplified to extend `DefaultPluginBootstrap`
+- `ImageService::crop()`: replaced direct metadata access with `getIconCoordinates()` API
+- Removed stale `unset($entity->icontime)` (handled by Elgg core)
+- Added `ext-intl` to composer.json requirements
+- Added docker/elgg6/ test stack
+
 ## 5.0.0 (2026-04-24)
 
 ### Breaking Changes

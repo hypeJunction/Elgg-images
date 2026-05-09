@@ -1,4 +1,4 @@
-# images — Architecture (Elgg 5.x)
+# images — Architecture (Elgg 6.x)
 
 ## Summary
 
@@ -58,6 +58,15 @@ Consumers can filter behaviour via `elgg_register_event_handler()`:
 
 - `imagine/imagine ^1.0` — image processing (GD backend)
 - No other plugin dependencies
+
+## Migration Notes (5.x → 6.x)
+
+- `elgg/elgg ~6.1.0`, `php >=8.1`, `ext-intl` added in `composer.json`.
+- `Bootstrap` simplified to extend `DefaultPluginBootstrap` (no-op method stubs removed).
+- `ImageService::crop()`: replaced direct metadata access `$entity->x1/y1/x2/y2` with `getIconCoordinates()`.
+- Removed stale `unset($entity->icontime)` call (handled by Elgg core since 4.x).
+- Docker test stack added for Elgg 6.x (docker/elgg6/).
+- No data migration needed.
 
 ## Migration Notes (4.x → 5.x)
 
