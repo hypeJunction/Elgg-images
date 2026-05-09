@@ -1,5 +1,6 @@
 {
 	"name": "hypejunction/images",
+<<<<<<< master
 	"version": "1.1.4",
 	"type": "elgg-plugin",
 	"description": "Images API",
@@ -8,6 +9,16 @@
 		"elgg", "plugin", "image"
 	],
 	"license": "GPL-2.0",
+=======
+	"type": "elgg-plugin",
+	"description": "Pure-service API plugin for Elgg that handles image upload, manipulation, and thumbnail generation for any file-based entity",
+	"keywords": [
+		"elgg",
+		"plugin",
+		"image"
+	],
+	"license": "GPL-2.0-or-later",
+>>>>>>> migrate/elgg-7.x
 	"authors": [
 		{
 			"name": "Ismayil Khayredinov",
@@ -15,9 +26,29 @@
 		}
 	],
 	"require": {
+<<<<<<< master
 		"php": ">=5.5",
 		"composer/installers": "~1.0",
 		"imagine/imagine": "~0.6"
 	}
 }
 
+=======
+		"php": ">=8.3",
+		"ext-intl": "*",
+		"imagine/imagine": "^1.0",
+		"elgg/elgg": "~7.0.0",
+		"composer/installers": "^2.0"
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true
+		}
+	},
+	"extra": {
+		"elgg-plugin": {
+			"id": "images"
+		}
+	}
+}
+>>>>>>> migrate/elgg-7.x

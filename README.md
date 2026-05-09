@@ -1,3 +1,4 @@
+<<<<<<< master
 Image API for Elgg
 ==================
 ![Elgg 2.1](https://img.shields.io/badge/Elgg-2.1.x-orange.svg?style=flat-square)
@@ -52,3 +53,34 @@ are ElggFile entities contained by the entity they belong to. Avatars belong to 
 
 * If you override file plugin thumbs, you will need to update the file upload action to remove the code that generates thumbnails.
 Otherwise, two sets of thumbs will be generated. Currently there is no way to non-intrusively override thumb generation in the file plugin.
+=======
+# images
+
+![Elgg 5.x](https://img.shields.io/badge/Elgg-5.x-orange.svg?style=flat-square)
+
+Pure-service API plugin for Elgg that handles image upload, manipulation, and thumbnail generation for any file-based entity.
+
+## Features
+
+- Image upload from HTTP multipart or local path/URL via the `images()` service helper
+- Automatic thumbnail generation at all configured icon sizes on entity create/update
+- Filterable thumb sizes, filenames, and storage directories via Elgg events
+- `entity:icon:url` integration — icon requests resolved to inline thumbnail URLs automatically
+- Thumbnail lifecycle management: thumbnails are regenerated on update and cleared on delete
+
+## Installation
+
+**Via Composer (recommended):**
+
+```bash
+composer require hypejunction/images
+```
+
+**Manual:**
+
+Download the zip, extract into your Elgg `mod/` directory, and activate in the admin panel.
+
+## License
+
+GPL-2.0-or-later
+>>>>>>> migrate/elgg-7.x

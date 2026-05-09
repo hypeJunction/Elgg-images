@@ -1,3 +1,4 @@
+<<<<<<< master
 #Ignore files that will need to be changed locally
 .DS_Store
 .htaccess
@@ -11,3 +12,8 @@ robots.txt
 /mod/
 composer.lock
 Gemfile.lock
+=======
+/vendor/
+composer.lock
+tests/.phpunit.result.cache
+>>>>>>> migrate/elgg-7.x

@@ -4,6 +4,12 @@ namespace hypeJunction\Images;
 
 use ElggFile;
 
+<<<<<<< master
+=======
+/**
+ * Image class.
+ */
+>>>>>>> migrate/elgg-7.x
 class Image extends ElggFile implements ImageInterface {
 
 	/**
@@ -47,6 +53,7 @@ class Image extends ElggFile implements ImageInterface {
 	public function clearThumbs() {
 		return images()->clearThumbs($this);
 	}
+<<<<<<< master
 
 	/**
 	 * {@inheritdoc}
@@ -62,4 +69,6 @@ class Image extends ElggFile implements ImageInterface {
 		return elgg_get_inline_url($this, true);
 	}
 
+=======
+>>>>>>> migrate/elgg-7.x
 }

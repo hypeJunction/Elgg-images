@@ -5,12 +5,19 @@ namespace hypeJunction\Images;
 use Elgg\Http\Request;
 use ElggEntity;
 use ElggFile;
+<<<<<<< master
 use ElggUser;
 use Exception;
+=======
+>>>>>>> migrate/elgg-7.x
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+<<<<<<< master
+=======
+use Exception;
+>>>>>>> migrate/elgg-7.x
 
 /**
  * Image service
@@ -30,7 +37,13 @@ class ImageService {
 
 	/**
 	 * Constructor
+<<<<<<< master
 	 * @param ImagineInterface $imagine
+=======
+	 *
+	 * @param Request          $request HTTP request
+	 * @param ImagineInterface $imagine Imagine service
+>>>>>>> migrate/elgg-7.x
 	 */
 	public function __construct(Request $request, ImagineInterface $imagine) {
 		$this->request = $request;
@@ -40,17 +53,27 @@ class ImageService {
 	/**
 	 * Write uploaded file to a file object
 	 * If no $file is provided, a new object of subtype 'file' will be created
+<<<<<<< master
 	 * 
+=======
+	 *
+>>>>>>> migrate/elgg-7.x
 	 * @param string   $input_name Input name
 	 * @param ElggFile $file       Optional file object to write to
 	 * @return ElggFile|false
 	 */
 	public function createFromUpload($input_name, ElggFile $file = null) {
+<<<<<<< master
 
 		$upload = $this->request->files->get($input_name);
 
 		if (!$upload instanceof UploadedFile) {
 			return $file ? : false;
+=======
+		$upload = $this->request->files->get($input_name);
+		if (!$upload instanceof UploadedFile) {
+			return $file ?: false;
+>>>>>>> migrate/elgg-7.x
 		}
 
 		if (!$upload->isValid() || !preg_match('~^image/(jpeg|gif|png)~', $upload->getClientMimeType())) {
@@ -59,7 +82,11 @@ class ImageService {
 
 		if (!isset($file)) {
 			$file = new ElggFile();
+<<<<<<< master
 			$file->subtype = 'file';
+=======
+			$file->setSubtype('file');
+>>>>>>> migrate/elgg-7.x
 			$file->owner_guid = elgg_get_logged_in_user_guid();
 		}
 
@@ -77,6 +104,7 @@ class ImageService {
 		$basename = elgg_strtolower(time() . $originalfilename);
 		$directory = $this->getDirectory($file);
 		$filename = $this->getFilename($file, $basename);
+<<<<<<< master
 
 		$file->setFilename("$directory/$filename");
 
@@ -85,14 +113,40 @@ class ImageService {
 		move_uploaded_file($upload->getPathname(), $file->getFilenameOnFilestore());
 
 		$file->mimetype = ElggFile::detectMimeType($upload->getPathname(), $upload->getClientMimeType());
+=======
+		$file->setFilename("{$directory}/{$filename}");
+
+		// Elgg 5.x removed ElggFile::detectMimeType — use the OS-level
+		// detector and fall back to the client-supplied mimetype.
+		$file->mimetype = @mime_content_type($upload->getPathname()) ?: $upload->getClientMimeType();
+>>>>>>> migrate/elgg-7.x
 		$file->simpletype = 'image';
 		$file->originalfilename = $originalfilename;
 		if (!isset($file->title)) {
 			$file->title = $file->originalfilename;
 		}
 
+<<<<<<< master
 		if (!$file->exists() || !$file->save()) {
 			// faled to write the file
+=======
+		// Save FIRST so the file gets its GUID. In Elgg 5.x, DiskFilestore uses
+		// the entity GUID (not owner_guid) to compute paths for `file`-subtype
+		// entities, so writing before save would land bytes at a pre-save path
+		// that no longer exists once the GUID is assigned.
+		if (!$file->save()) {
+			return false;
+		}
+
+		$file->open('write');
+		$file->close();
+		if (!move_uploaded_file($upload->getPathname(), $file->getFilenameOnFilestore())) {
+			$file->delete();
+			return false;
+		}
+
+		if (!$file->exists()) {
+>>>>>>> migrate/elgg-7.x
 			$file->delete();
 			return false;
 		}
@@ -109,7 +163,10 @@ class ImageService {
 	 * @return ElggFile|false
 	 */
 	public function createFromResource($path, ElggFile $file = null) {
+<<<<<<< master
 
+=======
+>>>>>>> migrate/elgg-7.x
 		$contents = @file_get_contents($path);
 		if (empty($contents)) {
 			return;
@@ -117,7 +174,11 @@ class ImageService {
 
 		if (!isset($file)) {
 			$file = new ElggFile();
+<<<<<<< master
 			$file->subtype = 'file';
+=======
+			$file->setSubtype('file');
+>>>>>>> migrate/elgg-7.x
 			$file->owner_guid = elgg_get_logged_in_user_guid();
 		}
 
@@ -139,6 +200,7 @@ class ImageService {
 		$basename = elgg_strtolower(time() . $originalfilename);
 		$directory = $this->getDirectory($file);
 		$filename = $this->getFilename($file, $basename);
+<<<<<<< master
 
 		$file->setFilename("$directory/$filename");
 
@@ -147,14 +209,41 @@ class ImageService {
 		$file->close();
 
 		$file->mimetype = $file->detectMimeType();
+=======
+		$file->setFilename("{$directory}/{$filename}");
+
+		// detect mime from the source file before write so we can short-circuit
+		// non-image inputs without touching the filestore at all
+		$file->mimetype = @mime_content_type($path) ?: 'application/octet-stream';
+>>>>>>> migrate/elgg-7.x
 		$file->simpletype = 'image';
 		$file->originalfilename = $originalfilename;
 		if (!isset($file->title)) {
 			$file->title = $file->originalfilename;
 		}
 
+<<<<<<< master
 		if (!$this->isImage($file) || !$file->exists() || !$file->save()) {
 			// written file is not an image or write failed
+=======
+		if (!$this->isImage($file)) {
+			return false;
+		}
+
+		// Save FIRST so the file gets its GUID. In Elgg 5.x, DiskFilestore uses
+		// the entity GUID (not owner_guid) to compute paths for `file`-subtype
+		// entities, so writing before save would land bytes at a pre-save path
+		// that no longer exists once the GUID is assigned.
+		if (!$file->save()) {
+			return false;
+		}
+
+		$file->open('write');
+		$file->write($contents);
+		$file->close();
+
+		if (!$file->exists()) {
+>>>>>>> migrate/elgg-7.x
 			$file->delete();
 			return false;
 		}
@@ -168,12 +257,19 @@ class ImageService {
 	 * @param ElggFile $file File entity
 	 * @return string
 	 */
+<<<<<<< master
 	protected function getDirectory(ElggFile $file) {
 		$default = 'file';
 		$params = [
 			'entity' => $file,
 		];
 		$directory = elgg_trigger_plugin_hook('directory', 'object', $params, $default);
+=======
+	public function getDirectory(ElggFile $file) {
+		$default = 'file';
+		$params = ['entity' => $file];
+		$directory = elgg_trigger_event_results('directory', 'object', $params, $default);
+>>>>>>> migrate/elgg-7.x
 		return trim($directory, '/');
 	}
 
@@ -184,18 +280,27 @@ class ImageService {
 	 * @param string   $basename Default filename
 	 * @return string
 	 */
+<<<<<<< master
 	protected function getFilename(ElggFile $file, $basename = '') {
 
+=======
+	public function getFilename(ElggFile $file, $basename = '') {
+>>>>>>> migrate/elgg-7.x
 		$filestorename = $file->getFilename();
 		if ($filestorename) {
 			$basename = pathinfo($filestorename, PATHINFO_BASENAME);
 		}
 
+<<<<<<< master
 		$params = [
 			'entity' => $file,
 		];
 
 		return elgg_trigger_plugin_hook('filename', 'object', $params, $basename);
+=======
+		$params = ['entity' => $file];
+		return elgg_trigger_event_results('thumb:filename', 'object', $params, $basename);
+>>>>>>> migrate/elgg-7.x
 	}
 
 	/**
@@ -205,11 +310,15 @@ class ImageService {
 	 * @return bool
 	 */
 	public function isImage($entity = null) {
+<<<<<<< master
 
+=======
+>>>>>>> migrate/elgg-7.x
 		if (!$entity instanceof ElggFile) {
 			return false;
 		}
 
+<<<<<<< master
 		$ext = pathinfo($entity->getFilenameOnFilestore(), PATHINFO_EXTENSION);
 		if (in_array($ext, array('jpg', 'jpeg', 'gif', 'png'))) {
 			return true;
@@ -217,6 +326,17 @@ class ImageService {
 		
 		$mimetype = $entity->mimetype ? : $entity->detectMimeType(null, 'application/otcet-stream');
 		if (preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
+=======
+		// detectMimeType() was removed in Elgg 4.x. Fall back to mime_content_type()
+		// only when the file actually exists on the filestore.
+		$mimetype = $entity->mimetype;
+		if (empty($mimetype) && $entity->exists()) {
+			$path = $entity->getFilenameOnFilestore();
+			$mimetype = @mime_content_type($path) ?: 'application/octet-stream';
+		}
+
+		if (!empty($mimetype) && preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
+>>>>>>> migrate/elgg-7.x
 			// Imagine doesn't support other image types
 			return true;
 		}
@@ -229,14 +349,21 @@ class ImageService {
 	 *
 	 * @param ElggEntity $entity Entity
 	 * @param string     $size   Thumb size
+<<<<<<< master
 	 * @return boolean|Thumb
 	 */
 	public function getThumb(ElggEntity $entity, $size = 'medium') {
 
+=======
+	 * @return boolean|\Thumb
+	 */
+	public function getThumb(ElggEntity $entity, $size = 'medium') {
+>>>>>>> migrate/elgg-7.x
 		if (!$this->isImage($entity)) {
 			return false;
 		}
 
+<<<<<<< master
 		$sizes = $this->getThumbSizes($entity);
 		if (!array_key_exists($size, $sizes)) {
 			return false;
@@ -255,6 +382,17 @@ class ImageService {
 		$thumb->owner_guid = $entity->icon_owner_guid ? : $entity->owner_guid;
 		$thumb->setFilename($filestorename);
 
+=======
+		if (!array_key_exists($size, $this->getThumbSizes($entity))) {
+			return false;
+		}
+
+		$directory = $this->getThumbDirectory($entity);
+		$filename = $this->getThumbFilename($entity, $size);
+		$thumb = new Thumb();
+		$thumb->owner_guid = $entity->icon_owner_guid ?: $entity->owner_guid;
+		$thumb->setFilename("{$directory}/{$filename}");
+>>>>>>> migrate/elgg-7.x
 		if (!$thumb->exists()) {
 			return false;
 		}
@@ -270,10 +408,15 @@ class ImageService {
 	 */
 	public function getThumbSizes(ElggEntity $entity) {
 		$defaults = (array) elgg_get_config('icon_sizes');
+<<<<<<< master
 		$params = [
 			'entity' => $entity,
 		];
 		return elgg_trigger_plugin_hook('thumb:sizes', $entity->getType(), $params, $defaults);
+=======
+		$params = ['entity' => $entity];
+		return elgg_trigger_event_results('thumb:sizes', $entity->getType(), $params, $defaults);
+>>>>>>> migrate/elgg-7.x
 	}
 
 	/**
@@ -282,12 +425,19 @@ class ImageService {
 	 * @param ElggEntity $entity Entity
 	 * @return string
 	 */
+<<<<<<< master
 	protected function getThumbDirectory(ElggEntity $entity) {
 		$default = 'icons';
 		$params = [
 			'entity' => $entity,
 		];
 		$directory = elgg_trigger_plugin_hook('thumb:directory', 'object', $params, $default);
+=======
+	public function getThumbDirectory(ElggEntity $entity) {
+		$default = 'icons';
+		$params = ['entity' => $entity];
+		$directory = elgg_trigger_event_results('thumb:directory', 'object', $params, $default);
+>>>>>>> migrate/elgg-7.x
 		return trim($directory, '/');
 	}
 
@@ -298,6 +448,7 @@ class ImageService {
 	 * @param string     $size   Thumb size
 	 * @return string
 	 */
+<<<<<<< master
 	protected function getThumbFilename(ElggEntity $entity, $size = 'medium') {
 		if ($entity instanceof ElggFile) {
 			$mimetype = $entity->detectMimeType(null, $entity->mimetype);
@@ -312,11 +463,31 @@ class ImageService {
 				$ext = 'png';
 				break;
 			case 'image/gif' :
+=======
+	public function getThumbFilename(ElggEntity $entity, $size = 'medium') {
+		// detectMimeType() was removed in Elgg 4.x — fall back to the entity's
+		// stored mimetype, then to mime_content_type() if the file exists on the
+		// filestore.
+		$mimetype = $entity->mimetype;
+		if (empty($mimetype) && $entity instanceof ElggFile && $entity->exists()) {
+			$mimetype = @mime_content_type($entity->getFilenameOnFilestore()) ?: 'application/octet-stream';
+		}
+
+		switch ($mimetype) {
+			default:
+				$ext = 'jpg';
+				break;
+			case 'image/png':
+				$ext = 'png';
+				break;
+			case 'image/gif':
+>>>>>>> migrate/elgg-7.x
 				$ext = 'gif';
 				break;
 		}
 
 		$default = "{$entity->guid}/{$size}.{$ext}";
+<<<<<<< master
 		$params = [
 			'entity' => $entity,
 			'size' => $size,
@@ -324,16 +495,28 @@ class ImageService {
 		];
 
 		return elgg_trigger_plugin_hook('thumb:filename', 'object', $params, $default);
+=======
+		$params = ['entity' => $entity, 'size' => $size, 'extension' => $ext];
+		return elgg_trigger_event_results('thumb:filename', 'object', $params, $default);
+>>>>>>> migrate/elgg-7.x
 	}
 
 	/**
 	 * Crop source image
 	 *
+<<<<<<< master
 	 * @param ElggEntity $entity  Entity
 	 * @param int        $x1 Upper left crooping coordinate
 	 * @param int        $y1 Upper left crooping coordinate
 	 * @param int        $x2 Lower right cropping coordinate
 	 * @param int        $y2 Lower right cropping coordinate
+=======
+	 * @param ElggEntity $entity Entity
+	 * @param int        $x1     Upper left crooping coordinate
+	 * @param int        $y1     Upper left crooping coordinate
+	 * @param int        $x2     Lower right cropping coordinate
+	 * @param int        $y2     Lower right cropping coordinate
+>>>>>>> migrate/elgg-7.x
 	 * @return bool
 	 */
 	public function crop(ElggEntity $entity, $x1, $y1, $x2, $y2) {
@@ -343,11 +526,15 @@ class ImageService {
 
 		$crop_width = $x2 - $x1;
 		$crop_height = $y2 - $y1;
+<<<<<<< master
 
+=======
+>>>>>>> migrate/elgg-7.x
 		if ($crop_width <= 0 && $crop_height <= 0) {
 			return false;
 		}
 
+<<<<<<< master
 		$params = [
 			'entity' => $entity,
 			'thumb' => $entity,
@@ -356,6 +543,12 @@ class ImageService {
 		try {
 			ini_set('memory_limit', '256M');
 
+=======
+		$params = ['entity' => $entity, 'thumb' => $entity];
+		$options = elgg_trigger_event_results('options', 'imagine', $params, []);
+		try {
+			ini_set('memory_limit', '256M');
+>>>>>>> migrate/elgg-7.x
 			$image = $this->imagine->open($entity->getFilenameOnFilestore());
 			$image = $image->crop(new Point($x1, $y1), new Box($crop_width, $crop_height));
 			$image->save($entity->getFilenameOnFilestore(), $options);
@@ -371,6 +564,7 @@ class ImageService {
 	 * Create image thumbnails
 	 * If coordinates are not set, $entity metadata will be used
 	 *
+<<<<<<< master
 	 * @param ElggEntity $entity  Entity
 	 * @param int        $x1 Upper left crooping coordinate
 	 * @param int        $y1 Upper left crooping coordinate
@@ -380,10 +574,21 @@ class ImageService {
 	 */
 	public function createThumbs(ElggEntity $entity, $x1 = null, $y1 = null, $x2 = null, $y2 = null) {
 
+=======
+	 * @param ElggEntity $entity Entity
+	 * @param int        $x1     Upper left crooping coordinate
+	 * @param int        $y1     Upper left crooping coordinate
+	 * @param int        $x2     Lower right cropping coordinate
+	 * @param int        $y2     Lower right cropping coordinate
+	 * @return Thumb[]|false
+	 */
+	public function createThumbs(ElggEntity $entity, $x1 = null, $y1 = null, $x2 = null, $y2 = null) {
+>>>>>>> migrate/elgg-7.x
 		if (!$this->isImage($entity)) {
 			return false;
 		}
 
+<<<<<<< master
 		$this->clearThumbs($entity);
 		
 		$x1 = isset($x1) ? (int) $x1 : (int) $entity->x1;
@@ -400,11 +605,25 @@ class ImageService {
 		$sizes = $this->getThumbSizes($entity);
 		foreach ($sizes as $size => $opts) {
 
+=======
+		$coords = $entity->getIconCoordinates();
+		$x1 = isset($x1) ? (int) $x1 : (int) elgg_extract('x1', $coords, 0);
+		$y1 = isset($y1) ? (int) $y1 : (int) elgg_extract('y1', $coords, 0);
+		$x2 = isset($x2) ? (int) $x2 : (int) elgg_extract('x2', $coords, 0);
+		$y2 = isset($y2) ? (int) $y2 : (int) elgg_extract('y2', $coords, 0);
+		$crop_width = $x2 - $x1;
+		$crop_height = $y2 - $y1;
+		$error = false;
+		$thumbs = [];
+		$sizes = $this->getThumbSizes($entity);
+		foreach ($sizes as $size => $opts) {
+>>>>>>> migrate/elgg-7.x
 			$width = elgg_extract('w', $opts);
 			$height = elgg_extract('h', $opts);
 			$square = elgg_extract('square', $opts);
 			$croppable = elgg_extract('croppable', $opts, $square);
 			$mode = elgg_extract('mode', $opts);
+<<<<<<< master
 			$metadata_name = elgg_extract('metadata_name', $opts);
 
 			if ($metadata_name && $entity->$metadata_name) {
@@ -418,12 +637,20 @@ class ImageService {
 			$thumb = new Thumb();
 			$thumb->owner_guid = $entity->owner_guid;
 			$thumb->setFilename($filestorename);
+=======
+			$directory = $this->getThumbDirectory($entity);
+			$filename = $this->getThumbFilename($entity, $size);
+			$thumb = new Thumb();
+			$thumb->owner_guid = $entity->owner_guid;
+			$thumb->setFilename("{$directory}/{$filename}");
+>>>>>>> migrate/elgg-7.x
 			if (!$thumb->exists()) {
 				$thumb->open('write');
 				$thumb->close();
 			}
 
 			$thumbs[] = $thumb;
+<<<<<<< master
 
 			$params = [
 				'entity' => $entity,
@@ -436,6 +663,14 @@ class ImageService {
 
 				if ($mode != 'outbound' && $mode != 'inset') {
 					$mode = ($square) ? 'outbound' : 'inset';
+=======
+			$params = ['entity' => $entity, 'thumb' => $thumb];
+			$options = elgg_trigger_event_results('options', 'imagine', $params, []);
+			try {
+				ini_set('memory_limit', '256M');
+				if ($mode != 'outbound' && $mode != 'inset') {
+					$mode = $square ? 'outbound' : 'inset';
+>>>>>>> migrate/elgg-7.x
 				}
 
 				$box = new Box($width, $height);
@@ -443,6 +678,7 @@ class ImageService {
 				if ($croppable && $crop_width > 0 && $crop_height > 0) {
 					$image = $image->crop(new Point($x1, $y1), new Box($crop_width, $crop_height));
 				}
+<<<<<<< master
 				$image = $image->thumbnail($box, $mode);
 				$image->save($thumb->getFilenameOnFilestore(), $options);
 				unset($image);
@@ -451,6 +687,12 @@ class ImageService {
 					$md_name = $opts['metadata_name'];
 					$entity->$md_name = $thumb->getFilename();
 				}
+=======
+
+				$image = $image->thumbnail($box, $mode);
+				$image->save($thumb->getFilenameOnFilestore(), $options);
+				unset($image);
+>>>>>>> migrate/elgg-7.x
 			} catch (Exception $ex) {
 				elgg_log($ex->getMessage(), 'ERROR');
 				$error = true;
@@ -461,6 +703,10 @@ class ImageService {
 			foreach ($thumbs as $thumb) {
 				$thumb->delete();
 			}
+<<<<<<< master
+=======
+
+>>>>>>> migrate/elgg-7.x
 			return false;
 		}
 
@@ -475,7 +721,10 @@ class ImageService {
 	 * @return void
 	 */
 	public function clearThumbs(ElggEntity $entity) {
+<<<<<<< master
 
+=======
+>>>>>>> migrate/elgg-7.x
 		if (!$this->isImage($entity)) {
 			return;
 		}
@@ -487,6 +736,7 @@ class ImageService {
 				$thumb->delete();
 			}
 		}
+<<<<<<< master
 		unset($entity->icontime);
 		unset($entity->icon_owner_guid);
 		touch($entity->getFilenameOnFilestore());
@@ -614,4 +864,16 @@ class ImageService {
 		]);
 	}
 
+=======
+
+		unset($entity->icon_owner_guid);
+
+		// Bust caches by touching the source file. Skip if the file was
+		// already removed (e.g. during a delete event firing on an entity
+		// whose filestore content has gone).
+		if ($entity instanceof ElggFile && $entity->exists()) {
+			@touch($entity->getFilenameOnFilestore());
+		}
+	}
+>>>>>>> migrate/elgg-7.x
 }

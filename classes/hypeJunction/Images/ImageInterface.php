@@ -51,6 +51,7 @@ interface ImageInterface {
 	 * @return bool
 	 */
 	public function clearThumbs();
+<<<<<<< master
 
 	/**
 	 * Returns download URL
@@ -64,4 +65,6 @@ interface ImageInterface {
 	 */
 	public function getInlineUrl();
 
+=======
+>>>>>>> migrate/elgg-7.x
 }
