@@ -6,31 +6,52 @@ use Elgg\IntegrationTestCase;
 
 class BootstrapTest extends IntegrationTestCase {
 
-	public function getPluginID(): string {
+	/**
+     * @return string
+     */
+    public function getPluginID(): string {
 		return 'images';
 	}
 
-	public function up(): void {}
+	/**
+     * @return void
+     */
+    public function up(): void {}
 
-	public function down(): void {}
+	/**
+     * @return void
+     */
+    public function down(): void {}
 
-	public function testPluginIsActive(): void {
+	/**
+     * @return void
+     */
+    public function testPluginIsActive(): void {
 		$plugin = elgg_get_plugin_from_id('images');
 		$this->assertInstanceOf(\ElggPlugin::class, $plugin);
 		$this->assertTrue($plugin->isActive());
 	}
 
-	public function testImagesHelperReturnsService(): void {
+	/**
+     * @return void
+     */
+    public function testImagesHelperReturnsService(): void {
 		$this->assertInstanceOf(ImageService::class, images());
 	}
 
-	public function testImagesHelperReturnsSingleton(): void {
+	/**
+     * @return void
+     */
+    public function testImagesHelperReturnsSingleton(): void {
 		$first = images();
 		$second = images();
 		$this->assertSame($first, $second);
 	}
 
-	public function testIconUrlEventRegistered(): void {
+	/**
+     * @return void
+     */
+    public function testIconUrlEventRegistered(): void {
 		$user = $this->createUser();
 		_elgg_services()->session_manager->setLoggedInUser($user);
 
