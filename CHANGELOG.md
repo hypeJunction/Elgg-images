@@ -1,5 +1,17 @@
 # Changelog
 
+## 7.0.0 (2026-05-09)
+
+### Breaking Changes
+
+- Requires Elgg 7.x (`~7.0.0`) and PHP 8.3+
+
+### Changed
+
+- `elgg/elgg ~7.0.0`, PHP `>=8.3`
+- Added docker/elgg7/ test stack (PHP 8.3, MySQL 8.0)
+- No PHP or CSS breaking changes. No data migration required.
+
 ## 6.0.0 (2026-05-09)
 
 ### Breaking Changes
