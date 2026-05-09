@@ -9,7 +9,5 @@ $subtypes = [
 ];
 
 foreach ($subtypes as $subtype => $class) {
-	if (!update_subtype('object', $subtype, $class)) {
-		add_subtype('object', $subtype, $class);
-	}
+	elgg_set_entity_class('object', $subtype, $class);
 }

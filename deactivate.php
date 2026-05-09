@@ -1,3 +1,3 @@
 <?php
 
-update_subtype('object', 'avatar', ElggFile::class);
+elgg_set_entity_class('object', 'avatar', ElggFile::class);
