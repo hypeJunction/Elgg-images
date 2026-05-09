@@ -6,18 +6,32 @@ use Elgg\IntegrationTestCase;
 
 class ImageServiceFilenameTest extends IntegrationTestCase {
 
-	public function getPluginID(): string {
+	/**
+     * @return string
+     */
+    public function getPluginID(): string {
 		return 'images';
 	}
 
-	public function up(): void {
+	/**
+     * @return void
+     */
+    public function up(): void {
 		$user = $this->createUser();
 		_elgg_services()->session_manager->setLoggedInUser($user);
 	}
 
-	public function down(): void {}
+	/**
+     * @return void
+     */
+    public function down(): void {}
 
-	private function makeFile(string $mimetype, string $filename = ''): \ElggFile {
+	/**
+     * @param string $mimetype
+     * @param string $filename
+     * @return ElggFile
+     */
+    private function makeFile(string $mimetype, string $filename = ''): \ElggFile {
 		$user = elgg_get_logged_in_user_entity();
 		$file = new \ElggFile();
 		$file->owner_guid = $user->guid;
@@ -33,13 +47,19 @@ class ImageServiceFilenameTest extends IntegrationTestCase {
 		return $file;
 	}
 
-	public function testGetDirectoryReturnsDefault(): void {
+	/**
+     * @return void
+     */
+    public function testGetDirectoryReturnsDefault(): void {
 		$file = new \ElggFile();
 		$file->owner_guid = elgg_get_logged_in_user_guid();
 		$this->assertEquals('file', images()->getDirectory($file));
 	}
 
-	public function testGetDirectoryHonoursEventOverride(): void {
+	/**
+     * @return void
+     */
+    public function testGetDirectoryHonoursEventOverride(): void {
 		$handler = function (\Elgg\Event $event) {
 			return 'custom_dir';
 		};
@@ -53,7 +73,10 @@ class ImageServiceFilenameTest extends IntegrationTestCase {
 		}
 	}
 
-	public function testGetDirectoryTrimsSlashes(): void {
+	/**
+     * @return void
+     */
+    public function testGetDirectoryTrimsSlashes(): void {
 		$handler = function (\Elgg\Event $event) {
 			return '/leading/and/trailing/';
 		};
@@ -67,14 +90,20 @@ class ImageServiceFilenameTest extends IntegrationTestCase {
 		}
 	}
 
-	public function testGetThumbDirectoryReturnsDefault(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbDirectoryReturnsDefault(): void {
 		$file = new \ElggFile();
 		$file->owner_guid = elgg_get_logged_in_user_guid();
 		$file->mimetype = 'image/jpeg';
 		$this->assertEquals('icons', images()->getThumbDirectory($file));
 	}
 
-	public function testGetThumbDirectoryHonoursEventOverride(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbDirectoryHonoursEventOverride(): void {
 		$handler = function (\Elgg\Event $event) {
 			return 'thumb_cache';
 		};
@@ -88,28 +117,40 @@ class ImageServiceFilenameTest extends IntegrationTestCase {
 		}
 	}
 
-	public function testGetThumbFilenameUsesJpgExtensionForJpeg(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbFilenameUsesJpgExtensionForJpeg(): void {
 		$file = $this->makeFile('image/jpeg', 'test/sample.jpg');
 		$filename = images()->getThumbFilename($file, 'medium');
 		$this->assertEquals("{$file->guid}/medium.jpg", $filename);
 		$file->delete();
 	}
 
-	public function testGetThumbFilenameUsesPngExtensionForPng(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbFilenameUsesPngExtensionForPng(): void {
 		$file = $this->makeFile('image/png', 'test/sample.png');
 		$filename = images()->getThumbFilename($file, 'small');
 		$this->assertEquals("{$file->guid}/small.png", $filename);
 		$file->delete();
 	}
 
-	public function testGetThumbFilenameUsesGifExtensionForGif(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbFilenameUsesGifExtensionForGif(): void {
 		$file = $this->makeFile('image/gif', 'test/sample.gif');
 		$filename = images()->getThumbFilename($file, 'large');
 		$this->assertEquals("{$file->guid}/large.gif", $filename);
 		$file->delete();
 	}
 
-	public function testGetThumbFilenameHonoursEventOverride(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbFilenameHonoursEventOverride(): void {
 		// `thumb:filename`/`object` is also fired by getFilename() with no `size`
 		// param — defensively read params with a default so this handler is safe
 		// to leave registered if the test fails partway through.

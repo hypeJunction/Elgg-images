@@ -13,22 +13,38 @@ use Elgg\IntegrationTestCase;
  */
 class IconUrlEventTest extends IntegrationTestCase {
 
-	public function getPluginID(): string {
+	/**
+     * @return string
+     */
+    public function getPluginID(): string {
 		return 'images';
 	}
 
-	public function up(): void {
+	/**
+     * @return void
+     */
+    public function up(): void {
 		$user = $this->createUser();
 		_elgg_services()->session_manager->setLoggedInUser($user);
 	}
 
-	public function down(): void {}
+	/**
+     * @return void
+     */
+    public function down(): void {}
 
-	private function fixturePath(string $name): string {
+	/**
+     * @param string $name
+     * @return string
+     */
+    private function fixturePath(string $name): string {
 		return dirname(__DIR__, 4) . '/fixtures/' . $name;
 	}
 
-	public function testIconUrlReturnsThumbUrlForImage(): void {
+	/**
+     * @return void
+     */
+    public function testIconUrlReturnsThumbUrlForImage(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
@@ -51,7 +67,10 @@ class IconUrlEventTest extends IntegrationTestCase {
 		$file->delete();
 	}
 
-	public function testIconUrlYieldsForNonImageEntity(): void {
+	/**
+     * @return void
+     */
+    public function testIconUrlYieldsForNonImageEntity(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$default = 'fallback-url';
@@ -63,7 +82,10 @@ class IconUrlEventTest extends IntegrationTestCase {
 		$this->assertEquals($default, $url);
 	}
 
-	public function testIconUrlYieldsWhenNoThumbExists(): void {
+	/**
+     * @return void
+     */
+    public function testIconUrlYieldsWhenNoThumbExists(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();

@@ -6,18 +6,30 @@ use Elgg\IntegrationTestCase;
 
 class ImageServiceThumbSizesTest extends IntegrationTestCase {
 
-	public function getPluginID(): string {
+	/**
+     * @return string
+     */
+    public function getPluginID(): string {
 		return 'images';
 	}
 
-	public function up(): void {
+	/**
+     * @return void
+     */
+    public function up(): void {
 		$user = $this->createUser();
 		_elgg_services()->session_manager->setLoggedInUser($user);
 	}
 
-	public function down(): void {}
+	/**
+     * @return void
+     */
+    public function down(): void {}
 
-	public function testGetThumbSizesFallsBackToIconSizesConfig(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbSizesFallsBackToIconSizesConfig(): void {
 		$user = elgg_get_logged_in_user_entity();
 		$file = new \ElggFile();
 		$file->owner_guid = $user->guid;
@@ -34,7 +46,10 @@ class ImageServiceThumbSizesTest extends IntegrationTestCase {
 		$file->delete();
 	}
 
-	public function testGetThumbSizesHonoursEventOverride(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbSizesHonoursEventOverride(): void {
 		$custom = [
 			'tiny' => ['w' => 16, 'h' => 16, 'square' => true],
 		];

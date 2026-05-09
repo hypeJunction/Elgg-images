@@ -13,22 +13,38 @@ use Elgg\IntegrationTestCase;
  */
 class ImageServiceLifecycleTest extends IntegrationTestCase {
 
-	public function getPluginID(): string {
+	/**
+     * @return string
+     */
+    public function getPluginID(): string {
 		return 'images';
 	}
 
-	public function up(): void {
+	/**
+     * @return void
+     */
+    public function up(): void {
 		$user = $this->createUser();
 		_elgg_services()->session_manager->setLoggedInUser($user);
 	}
 
-	public function down(): void {}
+	/**
+     * @return void
+     */
+    public function down(): void {}
 
-	private function fixturePath(string $name): string {
+	/**
+     * @param string $name
+     * @return string
+     */
+    private function fixturePath(string $name): string {
 		return dirname(__DIR__, 4) . '/fixtures/' . $name;
 	}
 
-	public function testCreateFromResourceWithJpegPersistsImageFile(): void {
+	/**
+     * @return void
+     */
+    public function testCreateFromResourceWithJpegPersistsImageFile(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
@@ -47,7 +63,10 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		$result->delete();
 	}
 
-	public function testCreateFromResourceRejectsNonImage(): void {
+	/**
+     * @return void
+     */
+    public function testCreateFromResourceRejectsNonImage(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
@@ -61,7 +80,10 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		$this->assertFalse($result);
 	}
 
-	public function testCreateFromResourceReturnsFalseWhenNoSessionAndNoOwner(): void {
+	/**
+     * @return void
+     */
+    public function testCreateFromResourceReturnsFalseWhenNoSessionAndNoOwner(): void {
 		// Drop the logged-in user from up() so the implicit owner_guid fallback
 		// in createFromResource (logged_in_user_guid()) yields 0, exercising the
 		// "files need an owner to load a filestore" guard.
@@ -71,7 +93,10 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		$this->assertFalse($result);
 	}
 
-	public function testCreateThumbsGeneratesThumbnailsForJpeg(): void {
+	/**
+     * @return void
+     */
+    public function testCreateThumbsGeneratesThumbnailsForJpeg(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
@@ -103,7 +128,10 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		$file->delete();
 	}
 
-	public function testCreateThumbsRejectsNonImage(): void {
+	/**
+     * @return void
+     */
+    public function testCreateThumbsRejectsNonImage(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
@@ -124,7 +152,10 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		$file->delete();
 	}
 
-	public function testGetThumbReturnsFalseForUnknownSize(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbReturnsFalseForUnknownSize(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
@@ -139,12 +170,18 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		$file->delete();
 	}
 
-	public function testGetThumbReturnsFalseForNonImage(): void {
+	/**
+     * @return void
+     */
+    public function testGetThumbReturnsFalseForNonImage(): void {
 		$user = elgg_get_logged_in_user_entity();
 		$this->assertFalse(images()->getThumb($user, 'medium'));
 	}
 
-	public function testClearThumbsRemovesGeneratedFiles(): void {
+	/**
+     * @return void
+     */
+    public function testClearThumbsRemovesGeneratedFiles(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
@@ -155,8 +192,6 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		$file = images()->createFromResource($this->fixturePath('sample.jpg'), $file);
 		$thumbs = images()->createThumbs($file);
 		$this->assertNotEmpty($thumbs);
-		$file->icontime = time();
-
 		images()->clearThumbs($file);
 
 		// After clearing, no thumb file should be retrievable.
@@ -166,13 +201,16 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		}
 
 		// Side-effects on the entity
-		$this->assertEmpty($file->icontime);
+		$this->assertFalse($file->hasIcon('small'), 'icons should be cleared');
 		$this->assertEmpty($file->icon_owner_guid);
 
 		$file->delete();
 	}
 
-	public function testCropChangesImageDimensions(): void {
+	/**
+     * @return void
+     */
+    public function testCropChangesImageDimensions(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
@@ -192,12 +230,18 @@ class ImageServiceLifecycleTest extends IntegrationTestCase {
 		$file->delete();
 	}
 
-	public function testCropRejectsNonImage(): void {
+	/**
+     * @return void
+     */
+    public function testCropRejectsNonImage(): void {
 		$user = elgg_get_logged_in_user_entity();
 		$this->assertFalse(images()->crop($user, 0, 0, 10, 10));
 	}
 
-	public function testCropRejectsZeroAreaCrop(): void {
+	/**
+     * @return void
+     */
+    public function testCropRejectsZeroAreaCrop(): void {
 		$user = elgg_get_logged_in_user_entity();
 
 		$file = new \ElggFile();
