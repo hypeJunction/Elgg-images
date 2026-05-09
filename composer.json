@@ -1,8 +1,7 @@
 {
 	"name": "hypejunction/images",
 	"type": "elgg-plugin",
-	"description": "Images API \u2014 image upload, manipulation, and thumbnail service",
-	"homepage": "http://hypejunction.com",
+	"description": "Pure-service API plugin for Elgg that handles image upload, manipulation, and thumbnail generation for any file-based entity",
 	"keywords": [
 		"elgg",
 		"plugin",
