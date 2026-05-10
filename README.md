@@ -27,3 +27,9 @@ Download the zip, extract into your Elgg `mod/` directory, and activate in the a
 ## License
 
 GPL-2.0-or-later
+
+## Compatibility
+
+| Plugin version | Elgg version |
+|---|---|
+| current | 5.x |
