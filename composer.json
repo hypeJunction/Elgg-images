@@ -15,11 +15,11 @@
 		}
 	],
 	"require": {
-		"php": ">=8.1",
-		"ext-intl": "*",
-		"imagine/imagine": "^1.0",
+		"composer/installers": "^2.0",
+		"php": ">=8.2",
 		"elgg/elgg": "~6.1.0",
-		"composer/installers": "^2.0"
+		"ext-intl": "*",
+		"imagine/imagine": "^1.0"
 	},
 	"config": {
 		"allow-plugins": {
