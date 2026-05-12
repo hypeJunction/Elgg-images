@@ -56,7 +56,7 @@ Otherwise, two sets of thumbs will be generated. Currently there is no way to no
 =======
 # images
 
-![Elgg 5.x](https://img.shields.io/badge/Elgg-5.x-orange.svg?style=flat-square)
+![Elgg 7.x](https://img.shields.io/badge/Elgg-7.x-orange.svg?style=flat-square)
 
 Pure-service API plugin for Elgg that handles image upload, manipulation, and thumbnail generation for any file-based entity.
 
