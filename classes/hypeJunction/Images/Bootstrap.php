@@ -9,6 +9,10 @@ use Elgg\DefaultPluginBootstrap;
  */
 class Bootstrap extends DefaultPluginBootstrap {
 
+	public function load() {
+		require_once dirname(__DIR__, 4) . '/autoloader.php';
+	}
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -17,11 +21,11 @@ class Bootstrap extends DefaultPluginBootstrap {
 			$params = $event->getParams();
 			$size = elgg_extract('size', $params, 'medium');
 			$entity = elgg_extract('entity', $params);
-			if (!images()->isImage($entity)) {
+			if (!\images()->isImage($entity)) {
 				return;
 			}
 
-			$thumb = images()->getThumb($entity, $size);
+			$thumb = \images()->getThumb($entity, $size);
 			if (!$thumb) {
 				return;
 			}
@@ -31,38 +35,38 @@ class Bootstrap extends DefaultPluginBootstrap {
 
 		elgg_register_event_handler('create', 'object', function(\Elgg\Event $event) {
 			$entity = $event->getObject();
-			if (!images()->isImage($entity) || !$entity instanceof \ElggFile || !$entity->exists()) {
+			if (!\images()->isImage($entity) || !$entity instanceof \ElggFile || !$entity->exists()) {
 				return;
 			}
 
 			if ($entity->icon_owner_guid && $entity->icon_owner_guid != $entity->owner_guid) {
-				images()->clearThumbs($entity);
+				\images()->clearThumbs($entity);
 			}
 
 			if (!$entity->hasIcon('small')) {
-				images()->createThumbs($entity);
+				\images()->createThumbs($entity);
 			}
 		});
 
 		elgg_register_event_handler('update:after', 'object', function(\Elgg\Event $event) {
 			$entity = $event->getObject();
-			if (!images()->isImage($entity) || !$entity instanceof \ElggFile || !$entity->exists()) {
+			if (!\images()->isImage($entity) || !$entity instanceof \ElggFile || !$entity->exists()) {
 				return;
 			}
 
 			if ($entity->icon_owner_guid && $entity->icon_owner_guid != $entity->owner_guid) {
-				images()->clearThumbs($entity);
+				\images()->clearThumbs($entity);
 			}
 
 			if (!$entity->hasIcon('small')) {
-				images()->createThumbs($entity);
+				\images()->createThumbs($entity);
 			}
 		});
 
 		elgg_register_event_handler('delete', 'object', function(\Elgg\Event $event) {
 			$entity = $event->getObject();
 			if ($entity instanceof \ElggEntity) {
-				images()->clearThumbs($entity);
+				\images()->clearThumbs($entity);
 			}
 		}, 999);
 	}
