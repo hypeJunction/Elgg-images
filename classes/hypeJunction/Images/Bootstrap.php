@@ -10,7 +10,7 @@ use Elgg\DefaultPluginBootstrap;
 class Bootstrap extends DefaultPluginBootstrap {
 
 	public function load() {
-		require_once dirname(__DIR__, 4) . '/autoloader.php';
+		require_once dirname(__DIR__, 3) . '/autoloader.php';
 	}
 
 	/**
