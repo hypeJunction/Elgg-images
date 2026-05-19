@@ -21,6 +21,14 @@
         "elgg/elgg": "~7.0.0",
         "composer/installers": "^2.0"
     },
+    "autoload": {
+        "psr-4": {
+            "hypeJunction\\Images\\": "classes/hypeJunction/Images/"
+        },
+        "files": [
+            "autoloader.php"
+        ]
+    },
     "config": {
         "allow-plugins": {
             "composer/installers": true
