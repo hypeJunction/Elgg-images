@@ -356,7 +356,7 @@ class ImageService {
 			$image->save($entity->getFilenameOnFilestore(), $options);
 			return true;
 		} catch (Exception $ex) {
-			elgg_log($ex->getMessage(), 'ERROR');
+			elgg_log($ex->getMessage(), 'error');
 		}
 
 		return false;
@@ -423,7 +423,7 @@ class ImageService {
 				$image->save($thumb->getFilenameOnFilestore(), $options);
 				unset($image);
 			} catch (Exception $ex) {
-				elgg_log($ex->getMessage(), 'ERROR');
+				elgg_log($ex->getMessage(), 'error');
 				$error = true;
 			}
 		}
