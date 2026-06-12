@@ -214,9 +214,15 @@ class ImageService {
 		if (in_array($ext, array('jpg', 'jpeg', 'gif', 'png'))) {
 			return true;
 		}
-		
-		$mimetype = $entity->mimetype ? : $entity->detectMimeType(null, 'application/otcet-stream');
-		if (preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
+
+		// detectMimeType() throws in Elgg 3.x when the file is missing on the
+		// filestore — only fall back to detection when the file exists.
+		$mimetype = $entity->mimetype;
+		if (empty($mimetype) && $entity->exists()) {
+			$mimetype = $entity->detectMimeType(null, 'application/octet-stream');
+		}
+
+		if (!empty($mimetype) && preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
 			// Imagine doesn't support other image types
 			return true;
 		}
