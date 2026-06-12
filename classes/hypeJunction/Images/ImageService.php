@@ -215,11 +215,15 @@ class ImageService {
 			return true;
 		}
 
-		// detectMimeType() throws in Elgg 3.x when the file is missing on the
-		// filestore — only fall back to detection when the file exists.
+		// detectMimeType() throws in Elgg 3.x when the path is not a readable
+		// regular file. ElggFile::exists() is not enough: file_exists() is true
+		// for directories, which is what a broken empty filename resolves to.
 		$mimetype = $entity->mimetype;
-		if (empty($mimetype) && $entity->exists()) {
-			$mimetype = $entity->detectMimeType(null, 'application/octet-stream');
+		if (empty($mimetype)) {
+			$path = $entity->getFilenameOnFilestore();
+			if ($path && is_file($path) && is_readable($path)) {
+				$mimetype = $entity->detectMimeType($path, 'application/octet-stream');
+			}
 		}
 
 		if (!empty($mimetype) && preg_match('~^image/(jpeg|gif|png)~', $mimetype)) {
