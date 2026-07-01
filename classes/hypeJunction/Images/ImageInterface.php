@@ -51,20 +51,4 @@ interface ImageInterface {
 	 * @return bool
 	 */
 	public function clearThumbs();
-<<<<<<< master
-
-	/**
-	 * Returns download URL
-	 * @return string
-	 */
-	public function getDownloadUrl();
-
-	/**
-	 * Returns inline display URL
-	 * @return string
-	 */
-	public function getInlineUrl();
-
-=======
->>>>>>> migrate/elgg-7.x
 }

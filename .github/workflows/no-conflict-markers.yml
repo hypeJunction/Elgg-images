@@ -1,0 +1,13 @@
+name: no-conflict-markers
+on: [push, pull_request]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject unresolved Git conflict markers
+        run: |
+          if grep -rnE '^(<<<<<<< |=======$|>>>>>>> )' --include='*.php' .; then
+            echo "::error::unresolved conflict markers found"; exit 1
+          fi
+          echo "no conflict markers"
